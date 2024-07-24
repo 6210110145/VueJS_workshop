@@ -85,21 +85,39 @@
                         </v-col>
 
                         <v-col>
-                            <strong>Lunch break</strong>
+                            <strong>ภาพยนตร์</strong>
+                            <strong>ฟุตบอล</strong>
+                            <strong>ชาบู</strong>
                         </v-col>
                     </v-row>
                 </v-timeline-item>
 
                 <v-timeline-item
                 color="teal lighten-3"
-                small
-                >
+                small >
                     <v-row class="pt-1">
                         <v-col cols="3">
                             <strong>สิ่งที่ไม่ชอบ:</strong>
                         </v-col>
                         <v-col>
-                            <strong>Finish Home Screen</strong>
+                            <strong>ความไม่ตรงต่อเวลา</strong>
+                            <strong>ฝุ่น</strong>
+                            <!-- <div class="text-caption">
+                                Web App
+                            </div> -->
+                        </v-col>
+                    </v-row>
+                </v-timeline-item>
+
+                <v-timeline-item
+                color="teal lighten-3"
+                small >
+                    <v-row class="pt-1">
+                        <v-col cols="3">
+                            <strong>Soft skill:</strong>
+                        </v-col>
+                        <v-col>
+                            <strong></strong>
                             <!-- <div class="text-caption">
                                 Web App
                             </div> -->
