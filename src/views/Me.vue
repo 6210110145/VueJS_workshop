@@ -10,8 +10,7 @@
 
     <v-card
     class="mx-auto"
-    max-width="410"
-    >
+    max-width="410" >
         <v-card
         dark
         flat>
@@ -128,8 +127,7 @@
                         color="teal lighten-3"
                         icon="mdi-thumb-up"
                         icon-color="white"
-                        small
-                        >
+                        small >
                             <v-row class="pt-1">
                                 <v-col cols="4">
                                     <strong>สิ่งที่ชอบ: </strong>
