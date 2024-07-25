@@ -9,7 +9,7 @@
 
     <v-card
     class="mx-auto"
-    max-width="450"
+    max-width="400"
     >
         <v-card
         dark
@@ -32,7 +32,7 @@
                 color="teal lighten-3"
                 small >
                     <v-row class="pt-1">
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <strong>ชื่อเล่น: </strong>
                         </v-col>
 
@@ -49,7 +49,7 @@
                 color="teal lighten-3"
                 small >
                     <v-row class="pt-1">
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <strong>จบจาก:</strong>
                         </v-col>
 
@@ -80,13 +80,13 @@
                 color="teal lighten-3"
                 small >
                     <v-row class="pt-1">
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <strong>สิ่งที่ชอบ: </strong>
                         </v-col>
 
                         <v-col>
                             <strong>ภาพยนตร์</strong>
-                            <strong>ฟุตบอล</strong>
+                            <div><strong>ฟุตบอล</strong></div>
                             <strong>ชาบู</strong>
                         </v-col>
                     </v-row>
@@ -96,11 +96,11 @@
                 color="teal lighten-3"
                 small >
                     <v-row class="pt-1">
-                        <v-col cols="3">
+                        <v-col cols="4">
                             <strong>สิ่งที่ไม่ชอบ:</strong>
                         </v-col>
                         <v-col>
-                            <strong>ความไม่ตรงต่อเวลา</strong>
+                            <div><strong>รถติด</strong></div>
                             <strong>ฝุ่น</strong>
                             <!-- <div class="text-caption">
                                 Web App
