@@ -23,7 +23,7 @@
             :disabled="!valid"
             color="success"
             class="mr-4"
-            @click="displayGrade(score)">
+            @click="displayGrade(score); validate();">
                 submit
             </v-btn>
 
@@ -35,11 +35,10 @@
             </v-btn>
 
         </v-form>
-        <div v-if="show" class="mt-5">
+        <div v-if="show" class="mt-5 d-flex flex-column justify-space-between align-center">
             <h3> Subject: {{subject}} </h3>
             <body-1> Grade: {{grade}} </body-1>
         </div>
-        
     </div>
 </template>
 
@@ -47,13 +46,14 @@
 export default {
     data() {
         return {
+            valid: true,
             subject: '',
             subjectRule: [
                 v => !!v || 'Subject is required',
             ],
             score: '',
             scoreRules: [
-                v => !!v || 'grade is required',
+                v => !!v || 'Score is required',
             ],
             grade: '',
             show: false
@@ -61,7 +61,9 @@ export default {
     },
     methods: {
         displayGrade(score) {
-            if(score > 100 || score < 0) {
+            if(!score) {
+                this.grade = ''
+            }else if(score > 100 || score < 0) {
                 alert('score must be 0-100')
                 this.show = false
             }else if(score >= 80) {
@@ -87,6 +89,9 @@ export default {
         reset () {
             this.show = false
             this.$refs.form.reset()
+        },
+        validate () {
+            this.$refs.form.validate()
         },
     }
 }

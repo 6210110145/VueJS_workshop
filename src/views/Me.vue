@@ -1,6 +1,7 @@
 <template>
-  <div class="d-flex flex-column justify-space-between align-center">
-    <h1> Teerapat Photongkam</h1>
+  <div class="d-flex flex-column justify-space-between align-center mt-2">
+    <h1> Teerapat Photongkam </h1>
+    <h3> ธีรภัทร เปาะทองคำ </h3>
     <!-- <v-card class="mx-auto">
         <v-img src="../assets/1.jpg"
         width="250"
@@ -9,7 +10,7 @@
 
     <v-card
     class="mx-auto"
-    max-width="400"
+    max-width="410"
     >
         <v-card
         dark
@@ -17,7 +18,8 @@
         >
             <v-img 
             src="../assets/me.jpg" 
-            height="400">
+            max-height="500"
+            contain>
                 <v-container class="fill-height">
                 <v-row align="center">
                 </v-row>
@@ -50,6 +52,20 @@
                 small >
                     <v-row class="pt-1">
                         <v-col cols="4">
+                            <strong>วันเกิด: </strong>
+                        </v-col>
+
+                        <v-col>
+                            <strong> 1 กุมภาพันธ์ 2543 </strong>
+                        </v-col>
+                    </v-row>
+                </v-timeline-item>
+
+                <v-timeline-item
+                color="teal lighten-3"
+                small >
+                    <v-row class="pt-1">
+                        <v-col cols="4">
                             <strong>จบจาก:</strong>
                         </v-col>
 
@@ -66,12 +82,22 @@
                             <v-avatar>
                                 <v-img src="https://www.eng.psu.ac.th/images/site/about/about-1.jpg" />
                             </v-avatar>
+                        </v-col>
+                    </v-row>
+                </v-timeline-item>
 
-                            <!-- <v-avatar>
-                                <v-img
-                                src="https://avataaars.io/?avatarStyle=Circle&topType=LongHairMiaWallace&accessoriesType=Sunglasses&hairColor=BlondeGolden&facialHairType=Blank&clotheType=BlazerSweater&eyeType=Surprised&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Pale"
-                                ></v-img>
-                            </v-avatar> -->
+                <v-timeline-item
+                color="teal lighten-3"
+                small >
+                    <v-row class="pt-1">
+                        <v-col cols="4">
+                            <strong>งานอดิเรก: </strong>
+                        </v-col>
+
+                        <v-col>
+                            <div><strong>ดูหนัง</strong></div>
+                            <div><strong>ตีแบดมินตัน</strong></div>
+                            <strong>วิ่งออกกำลังกาย</strong>
                         </v-col>
                     </v-row>
                 </v-timeline-item>
@@ -82,6 +108,13 @@
                     <v-row class="pt-1">
                         <v-col cols="4">
                             <strong>สิ่งที่ชอบ: </strong>
+                            <v-btn
+                            class="ma-2"
+                            text
+                            icon
+                            color="blue lighten-2">
+                                <v-icon>mdi-thumb-up</v-icon>
+                            </v-btn>
                         </v-col>
 
                         <v-col>
@@ -92,19 +125,25 @@
                     </v-row>
                 </v-timeline-item>
 
+                
+
                 <v-timeline-item
                 color="teal lighten-3"
                 small >
                     <v-row class="pt-1">
                         <v-col cols="4">
                             <strong>สิ่งที่ไม่ชอบ:</strong>
+                            <v-btn
+                            class="ma-2"
+                            text
+                            icon
+                            color="red lighten-2">
+                                <v-icon>mdi-thumb-down</v-icon>
+                            </v-btn>
                         </v-col>
                         <v-col>
                             <div><strong>รถติด</strong></div>
                             <strong>ฝุ่น</strong>
-                            <!-- <div class="text-caption">
-                                Web App
-                            </div> -->
                         </v-col>
                     </v-row>
                 </v-timeline-item>
@@ -113,14 +152,12 @@
                 color="teal lighten-3"
                 small >
                     <v-row class="pt-1">
-                        <v-col cols="3">
-                            <strong>Soft skill:</strong>
+                        <v-col cols="4">
+                            <strong>จุดแข็ง:</strong>
                         </v-col>
                         <v-col>
-                            <strong></strong>
-                            <!-- <div class="text-caption">
-                                Web App
-                            </div> -->
+                            <div><strong>มีความอดทน</strong></div>
+                            <strong>เรียนรู้เร็ว</strong>
                         </v-col>
                     </v-row>
                 </v-timeline-item>
