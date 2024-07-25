@@ -19,14 +19,25 @@
             </v-col>
 
             <v-col cols='12'>
-                <h1> {{address}} </h1>
+                <h1> {{token}} </h1>
                 <v-text-field
-                name="address"
-                label="address"
-                id="address"
-                v-model="address">
+                name="name"
+                label="name"
+                id="name"
+                v-model="name">
                 </v-text-field>
-                <v-btn color="info" @click="displayAlertParam(address)">alert</v-btn>
+
+                <v-text-field
+                name="token"
+                label="token"
+                id="token"
+                v-model="token">
+                </v-text-field>
+                <v-btn color="info" @click="setToken(token)">alert</v-btn>
+            </v-col>
+
+            <v-col cols="12">
+                <testpropsz :name="name" @displayAlert="displayAlert"/>
             </v-col>
         </v-row>
     </div>
@@ -35,10 +46,15 @@
 </template>
 
 <script>
+import testpropsz from '../components/TestPropsz.vue';
+import {EventBus} from '@/EventBus'
 export default {
+    components: {
+        testpropsz
+    },
     data() {
         return {
-            address: 'default',
+            token: '',
             name: 'teerapat photongkam',
             show: false,
             imgset: [
@@ -47,13 +63,21 @@ export default {
             ]
         }
     },
+    mounted() {
+        EventBus.$on('callMain', this.displayAlert)
+    },
+    beforeDestroy() {
+        EventBus.$off('callMain', this.displayAlert)
+    },
     methods: {
         displayAlert() {
             alert("Hello")
         },
-        displayAlertParam(item) {
-            this.address
-            alert(item)
+        setToken(item) {
+            localStorage.setItem("Token", item);
+            localStorage.setItem("User", this.name);
+            this.$cookies.set("token",item,"10s");
+            alert('set token success')
         }
     }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column justify-space-between align-center mt-2">
+  <div id="me" class="d-flex flex-column justify-space-between align-center mt-2 me">
     <h1> Teerapat Photongkam </h1>
     <h3> ธีรภัทร เปาะทองคำ </h3>
     <!-- <v-card class="mx-auto">
@@ -10,12 +10,15 @@
 
     <v-card
     class="mx-auto"
-    max-width="410" >
+    max-width="410"
+    elevation="11"
+    shaped >
         <v-card
         dark
         flat>
             <v-img 
-            src="../assets/me.jpg" 
+            src="../assets/me.jpg"
+            gradient="rgba(0,0,0,.15), rgba(0,0,0,.15)"
             max-height="500"
             contain>
                 <v-container class="fill-height">
@@ -65,6 +68,20 @@
                                     <!-- <div class="text-caption">
                                         Mobile App
                                     </div> -->
+                                </v-col>
+                            </v-row>
+                        </v-timeline-item>
+
+                        <v-timeline-item
+                        color="teal lighten-3"
+                        small >
+                            <v-row class="pt-1">
+                                <v-col cols="4">
+                                    <strong>เบอร์โทร: </strong>
+                                </v-col>
+
+                                <v-col>
+                                    <strong> 0952216693 </strong>
                                 </v-col>
                             </v-row>
                         </v-timeline-item>
@@ -203,7 +220,9 @@ export default {
     }),
 }
 </script>
-
+    
 <style>
-
+.me{
+    background-color: #EEEEEE
+}
 </style>

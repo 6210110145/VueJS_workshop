@@ -98,5 +98,7 @@ export default {
 </script>
 
 <style>
-
+.background{
+    background-color: #b0bec5
+}
 </style>
