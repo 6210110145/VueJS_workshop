@@ -1,8 +1,11 @@
 <template>
+  <!-- <shop-header /> -->
   <hello-world />
+  
 </template>
 
 <script>
+// import ShopHeader from '@/components/ShopHeader.vue'
   import HelloWorld from '../components/HelloWorld'
 
   export default {
@@ -10,6 +13,7 @@
 
     components: {
       HelloWorld,
+      // ShopHeader
     },
   }
 </script>

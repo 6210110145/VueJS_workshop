@@ -13,7 +13,7 @@ export default {
   methods: {
     callMain () {
       // this.$emit('displayAlert')
-      EventBus.$emit('callMain')
+      EventBus.$emit('callMain') // ส่งไปให้แม่ (simple.vue)
     }
   }
 }

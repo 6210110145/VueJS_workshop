@@ -30,8 +30,13 @@ const routes = [
         path: '/grade',
         name: 'grade',
         component: () => import('../views/Grade.vue')
-      }
+      },
     ]
+  },
+  {
+    path: '/shop',
+    name: 'shop',
+    component: () => import('../views/ShopHome.vue')
   },
   {
     path: '/me',
