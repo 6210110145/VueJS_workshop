@@ -1,6 +1,11 @@
 <template>
   <div>
-    <h1 class="d-flex flex-column justify-space-between align-center mt-3 mb-3"> สินค้าทั้งหมด </h1>
+    <div class="d-flex flex-column justify-space-between align-center mt-3 mb-3">
+    <h1> 
+        สินค้าทั้งหมด 
+    </h1>
+    <body-1> จำนวน .. สินค้า</body-1>
+    </div>
     <v-row>
         <v-col col="3" v-for="(item, index) in product" :key="index">
             <v-card
