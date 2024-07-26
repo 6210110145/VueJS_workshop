@@ -29,9 +29,6 @@
         </v-card>
 
         <v-card-text class="py-0">
-            <!-- <div class="font-weight-bold ml-3 mb-2 mt-2">
-                รายละเอียด
-            </div> -->
             <v-card-actions>
                 <v-btn
                 color="teal lighten-3"

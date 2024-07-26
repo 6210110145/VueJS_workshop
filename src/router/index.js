@@ -31,6 +31,11 @@ const routes = [
         name: 'grade',
         component: () => import('../views/Grade.vue')
       },
+      {
+        path: '/api',
+        name: 'api',
+        component: () => import('../views/Apicon.vue')
+      },
     ]
   },
   {

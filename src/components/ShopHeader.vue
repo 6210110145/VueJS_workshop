@@ -31,7 +31,7 @@
             <v-btn text>register</v-btn>
 
             <v-btn icon>
-              <v-icon>mdi-shopping</v-icon>
+              <v-icon>mdi-cart</v-icon>
             </v-btn>
 
             <v-menu 
