@@ -13,7 +13,7 @@ const routes = [
   {
     path: '',
     name: 'toolbar',
-    component: () => import('../views/Toolbar.vue'),
+    component: () => import('../views/ToolbarShop.vue'),
     children: [
       {
         path: '/about',
@@ -36,12 +36,17 @@ const routes = [
         name: 'api',
         component: () => import('../views/Apicon.vue')
       },
+      {
+        path: '/shop',
+        name: 'shop',
+        component: () => import('../views/ShopHome.vue')
+      },
+      {
+        path: '/cart',
+        name: 'cart',
+        component: () => import('../views/ShopCart.vue')
+      },
     ]
-  },
-  {
-    path: '/shop',
-    name: 'shop',
-    component: () => import('../views/ShopHome.vue')
   },
   {
     path: '/me',
