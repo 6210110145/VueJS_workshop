@@ -30,9 +30,11 @@
             <v-btn text @click="editLogin()">login</v-btn>
             <v-btn text @click="editRegister()">register</v-btn>
 
-            <v-btn icon>
-              <v-icon>mdi-cart</v-icon>
-            </v-btn>
+            <router-link to="/cart">
+                <v-btn icon>
+                    <v-icon>mdi-cart</v-icon>
+                </v-btn>
+            </router-link> 
 
             <v-menu 
             offset-y

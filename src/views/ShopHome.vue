@@ -23,12 +23,16 @@
                     {{item.name}}
                 </v-card-title>
                 <v-card-subtitle>
-                    
+                    {{item.detail.color}} {{item.detail.type}} for {{item.detail.gender}}
                 </v-card-subtitle>
+                <v-card-text>
+                    มีจำนวน: {{item.amount}}
+                </v-card-text>
                     <v-card-actions>
                         <v-btn
                         text
                         color="info"
+                        @click.once="addCart(item)"
                         >add cart</v-btn>
                     </v-card-actions>
             </v-card>
@@ -44,6 +48,7 @@ export default {
     data() {
         return {
             product: [],
+            order: []
         }
     },
     created() {
@@ -62,12 +67,18 @@ export default {
                     id: products._id,
                     name: products.product_name,
                     price: products.price,
+                    amount: products.amount,
+                    detail: products.detail,
                     linkimg: `http://localhost:3000/images/${products.product_img}`,
                 }));
             } catch (error) {
                 console.error("Error fetching products:", error);
             }
-        }
+        },
+        addCart(item) {
+          this.order.push(item)
+          console.log(this.order)
+        },
     }
 }
 </script>
