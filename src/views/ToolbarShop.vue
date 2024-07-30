@@ -30,11 +30,11 @@
             <v-btn text @click="editLogin()">login</v-btn>
             <v-btn text @click="editRegister()">register</v-btn>
 
-            <router-link to="/cart">
+            <!-- <router-link to="/cart">
                 <v-btn icon>
                     <v-icon>mdi-cart</v-icon>
                 </v-btn>
-            </router-link> 
+            </router-link>  -->
 
             <v-menu 
             offset-y
@@ -220,9 +220,10 @@ export default {
             showPassword: false,
             rules: {
                 required: value => !!value || 'Required.',
-                min: v => v.length >= 8 || 'Min 8 characters',
+                min: v => v.length >= 2 || 'Min 8 characters',
                 emailMatch: () => (`The email and password you entered don't match`),
-            }
+            },
+            Token: '',
         } 
     },
     methods: {
@@ -239,14 +240,16 @@ export default {
         },
         async loginUser() {
             try {
-                const {data} = await this.axios.post('http://localhost:3000/users/login', this.postdata, {
+                await this.axios.post('http://localhost:3000/users/login', this.postdata, {
                     headers: {
                         Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIkMmIkMTAkazU1WUdzcVdsei82aENiVU9USzFyLnZTZmJRelouSktVOHdSQU1VQzRNdmhJZVdQYi5UcG0iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MjE5NjU5Nzd9.cI1D5-9Tk9vgje9GFwGlJ9SrnfKHZUCOErREDC-40ng`
                     },
+                }).then((res) => {
+                    console.log(res.data.message)
+                    localStorage.setItem(this.Token, res.data.token);
+                    alert(res.data.message)
+                    this.closeItem()
                 })
-                console.log(data)
-                alert('register complete')
-                this.closeItem()
             }catch (err) {
                 console.log(err)
                 alert(err)

@@ -28,7 +28,7 @@
       <tbody>
         <tr
           v-for="(item) in order"
-          :key="item.name"
+          :key="item.product_name"
         >
             <td>{{ item.product_name }}</td>
             <td>{{ item.amount }}</td>
@@ -55,9 +55,6 @@
 
 <script>
 export default {
-    components: {
-        
-    },
     data() {
         return {
             order: [{
@@ -72,6 +69,7 @@ export default {
             ],
             product: [],
             priceTotal: 0,
+            // order: this.$router.history.state.order || []
         }
     },
     created() {
@@ -114,6 +112,7 @@ export default {
             }
         },
         // total() {
+            // return this.order.reduce((acc, item) => acc + item.price * item.amount, 0);
         //     for(let i=0; i < 2; i++) {
         //         this.priceTotal += (this.order[i].price * this.order[i].amount)
         //     }
