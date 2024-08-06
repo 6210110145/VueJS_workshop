@@ -26,9 +26,14 @@
             <v-btn icon>
               <v-icon>mdi-account</v-icon>
             </v-btn>
-
-            <v-btn text @click="editLogin()">login</v-btn>
-            <v-btn text @click="editRegister()">register</v-btn>
+            <div v-if="!headerToken">
+                <v-btn text @click="editLogin()">login</v-btn>
+                <v-btn text @click="editRegister()">register</v-btn>
+            </div>
+            <div v-else>
+                <v-btn text > profile </v-btn>
+            </div>
+            
 
             <!-- <router-link to="/cart">
                 <v-btn icon>
@@ -223,7 +228,7 @@ export default {
                 min: v => v.length >= 2 || 'Min 8 characters',
                 emailMatch: () => (`The email and password you entered don't match`),
             },
-            Token: '',
+            headerToken: '',
         } 
     },
     methods: {
@@ -240,13 +245,11 @@ export default {
         },
         async loginUser() {
             try {
-                await this.axios.post('http://localhost:3000/users/login', this.postdata, {
-                    headers: {
-                        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIkMmIkMTAkazU1WUdzcVdsei82aENiVU9USzFyLnZTZmJRelouSktVOHdSQU1VQzRNdmhJZVdQYi5UcG0iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MjE5NjU5Nzd9.cI1D5-9Tk9vgje9GFwGlJ9SrnfKHZUCOErREDC-40ng`
-                    },
-                }).then((res) => {
+                await this.axios.post('http://localhost:3000/users/login', this.postdata)
+                .then((res) => {
                     console.log(res.data.message)
-                    localStorage.setItem(this.Token, res.data.token);
+                    localStorage.setItem("token", res.data.token);
+                    this.headerToken = localStorage.getItem("token")
                     alert(res.data.message)
                     this.closeItem()
                 })
@@ -257,14 +260,9 @@ export default {
         },
         async registerUser() {
             try {
-                const {data} = await this.axios.post('http://localhost:3000/users/register', this.postdata, {
-                    headers: {
-                        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIkMmIkMTAkazU1WUdzcVdsei82aENiVU9USzFyLnZTZmJRelouSktVOHdSQU1VQzRNdmhJZVdQYi5UcG0iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MjE5NjU5Nzd9.cI1D5-9Tk9vgje9GFwGlJ9SrnfKHZUCOErREDC-40ng`
-                    },
-                })
+                const {data} = await this.axios.post('http://localhost:3000/users/register', this.postdata)
                 console.log(data)
                 alert('register complete')
-                // this.getData()
                 this.closeItem()
             }catch (err) {
                 alert(err)

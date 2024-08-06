@@ -27,11 +27,11 @@
       </thead>
       <tbody>
         <tr
-          v-for="(item) in order"
-          :key="item.product_name"
+          v-for="(item, index) in order"
+          :key="index"
         >
             <td>{{ item.product_name }}</td>
-            <td>{{ item.amount }}</td>
+            <td>{{ amount }}</td>
             <td>{{ item.price }}</td>
             <td class="text-center"> 
                 <v-btn text color="success" @click="addProduct(item.product_name)">+</v-btn> 
@@ -47,7 +47,7 @@
     </div>
 
     <div class="d-flex flex-column justify-space-between text-right mt-3 mb-3 mr-10 ml-10">
-        <v-btn color="success"> ยืนยันออเดอร์ </v-btn>
+        <v-btn color="success" @click="showOrder()"> ยืนยันออเดอร์ </v-btn>
     </div>
 
   </div>
@@ -57,23 +57,25 @@
 export default {
     data() {
         return {
-            order: [{
-                product_name: 'เสื้อยืดคอกลมสีขาว',
-                amount: 1,
-                price: 170
-            },{
-                product_name: 'เสื้อยืดคอกลมสีดำ',
-                amount: 1,
-                price: 150
-            }
-            ],
+            // order: [{
+            //     product_name: 'เสื้อยืดคอกลมสีขาว',
+            //     amount: 1,
+            //     price: 170
+            // },{
+            //     product_name: 'เสื้อยืดคอกลมสีดำ',
+            //     amount: 1,
+            //     price: 150
+            // }
+            // ],
             product: [],
             priceTotal: 0,
-            // order: this.$router.history.state.order || []
+            order: [],
+            id: [],
+            amount: 1
         }
     },
     created() {
-    //   this.getData()
+        this.getData()
     },
     computed: {
         // total() {
@@ -87,7 +89,7 @@ export default {
         addProduct(item){
             for (let product of this.order) {
                 if(item == product.product_name) {
-                    product.amount += 1
+                    this.amount += 1
                     console.log(this.order)
                 }
             }
@@ -95,9 +97,9 @@ export default {
         reduceProduct(item) {
             for (let product of this.order) {
                 if(item == product.product_name) {
-                    product.amount -= 1
+                    this.amount -= 1
                     if(product.amount < 0) {
-                        product.amount = 0
+                        this.amount = 0
                     }
                     console.log(this.order)
                 }
@@ -111,6 +113,24 @@ export default {
                     break;
             }
         },
+        showOrder() {
+            console.log(this.order)
+        },
+        getData() {
+            this.id = localStorage.getItem("order")
+            const splitArray = this.id.split(',');
+            for(let i=0; i < splitArray.length; i++) {
+                this.axios.get(`http://localhost:3000/products/${splitArray[i]}`, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }).then((response) => {
+                    this.order.push(response.data.data)
+                    console.log(this.order)
+                })
+                // console.log(splitArray[i])
+            }
+        }
         // total() {
             // return this.order.reduce((acc, item) => acc + item.price * item.amount, 0);
         //     for(let i=0; i < 2; i++) {
