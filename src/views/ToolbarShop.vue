@@ -10,7 +10,14 @@
           
             <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
 
-            <v-toolbar-title >Shop Store</v-toolbar-title>
+            <v-toolbar-title >
+                <router-link to="/shop">
+                    <v-btn text>
+                        Shop Store
+                    </v-btn>
+                </router-link>
+                
+            </v-toolbar-title>
             
             <!-- <v-spacer></v-spacer> -->
 
@@ -263,6 +270,7 @@ export default {
                     this.headerToken = localStorage.getItem("token")
                     alert(res.data.message)
                     this.closeItem()
+                    location.reload()
                 })
             }catch (err) {
                 console.log(err)
@@ -283,6 +291,7 @@ export default {
             localStorage.removeItem('token')
             localStorage.removeItem('role')
             this.headerToken = localStorage.getItem("token")
+            location.reload()
         }
     },
     computed: {

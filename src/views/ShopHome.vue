@@ -5,7 +5,7 @@
             สินค้าทั้งหมด
             <v-btn v-if="role == 'admin'" color="success" @click="newProduct()">Add Product</v-btn>  
         </h1>
-        <body-1 class="align-center mt-3 mb-3"> จำนวน 5 สินค้า</body-1>
+        <p class="align-center mt-3 mb-3"> จำนวน {{product.length}} สินค้า</p>
     </div>
 
     <v-row>
@@ -14,7 +14,7 @@
             width="350"
             class="ml-2">
                 <v-img 
-                :src="item.product_img"
+                :src="item.name_img"
                 width="350"
                 height="300">
                 </v-img>
@@ -68,8 +68,8 @@
                     <v-col cols="12">
                         <v-file-input
                         accept="image/*"
-                        label="product_img"
-                        v-model="postdata.product_img"
+                        label="name_img"
+                        v-model="postdata.name_img"
                         ></v-file-input>
                     </v-col>
                     <v-col cols="6">
@@ -140,12 +140,14 @@ export default {
             id:'',
             dialogedit: false,
             product: [],
+            product_response: [],
             order: [],
             token: '',
             Login: false,
             postdata: { // ชุดไว้ส่งข้อมูล
                 product_code: '',
                 product_name: '',
+                name_img: '',
                 product_img: '',
                 price: 100,
                 amount: 100,
@@ -158,6 +160,7 @@ export default {
             postdefault: { // ชุดไว้ล้างข้อมูล
                 product_code: '',
                 product_name: '',
+                name_img: '',
                 product_img: '',
                 price: 100,
                 amount: 100,
@@ -182,16 +185,16 @@ export default {
     methods: {
         async getData() {
             try {
-                const response = await this.axios.get("http://localhost:3000/products/");
-                console.log(response)
-                this.product = response.data.data.map((products) => ({
+                this.product_response = await this.axios.get("http://localhost:3000/products/");
+                this.product = this.product_response.data.data.map((products) => ({
                     id: products._id,
                     product_code: products.product_code,
                     product_name: products.product_name,
                     price: products.price,
                     amount: products.amount,
                     detail: products.detail,
-                    product_img: `http://localhost:3000/images/${products.product_img}`,
+                    name_img: `http://localhost:3000/images/${products.product_img}`,
+                    product_img: products.product_img,
                 }));
                 // this.role = localStorage.getItem("role")
             } catch (error) {
@@ -204,8 +207,7 @@ export default {
           }else {
             this.order.push(item.id);
             localStorage.setItem("order", this.order)
-            // this.order.push(item)
-            console.log(item.id)
+            // console.log(item.id)
           }
         },
         newProduct() {
@@ -226,7 +228,7 @@ export default {
             this.dialogedit = true
         },
         saveSelect() {
-            if(this.id != '') {
+            if(this.postdata.id != '') {
                 this.savePutData()
             }else {
                 this.savePostData()
@@ -249,6 +251,7 @@ export default {
             }
         },
         async savePutData() {
+            // console.log(this.postdata)
             try {
                 const {data} = await this.axios.put('http://localhost:3000/products/'+this.postdata.id, this.postdata, {
                     headers: {
