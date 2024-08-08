@@ -1,15 +1,11 @@
 <template>
   <div>
     <div class="d-flex flex-column justify-space-between align-center mt-3 mb-3">
-    <h1> 
-        สินค้าทั้งหมด
-        <v-btn icon @click="goToCart">
-          <v-icon>mdi-cart</v-icon>
-        </v-btn>
-
-        <v-btn v-if="token != ''" color="success" @click="newProduct()">Add Product</v-btn>
-    </h1>
-    <body-1> จำนวน 5 สินค้า</body-1>
+        <h1> 
+            สินค้าทั้งหมด
+            <v-btn v-if="role == 'admin'" color="success" @click="newProduct()">Add Product</v-btn>  
+        </h1>
+        <body-1 class="align-center mt-3 mb-3"> จำนวน 5 สินค้า</body-1>
     </div>
 
     <v-row>
@@ -18,7 +14,7 @@
             width="350"
             class="ml-2">
                 <v-img 
-                :src="item.linkimg"
+                :src="item.product_img"
                 width="350"
                 height="300">
                 </v-img>
@@ -26,7 +22,7 @@
                     {{item.price}} ฿
                 </v-card-title>
                 <v-card-title> 
-                    {{item.name}}
+                    {{item.product_name}}
                 </v-card-title>
                 <v-card-subtitle>
                     {{item.detail.color}} {{item.detail.type}} for {{item.detail.gender}}
@@ -36,7 +32,9 @@
                 </v-card-text>
                     <v-card-actions>
                         <v-btn text color="info" @click.once="addCart(item)"> add cart </v-btn>
-                        <v-btn text color="success" @click="editItem(item)"> edit </v-btn>
+                        <div v-if="role == 'admin'">
+                            <v-btn text color="success" @click="editItem(item)"> edit </v-btn>
+                        </div>
                     </v-card-actions>
             </v-card>
         </v-col>
@@ -47,16 +45,16 @@
     max-width="500px">
         <v-card>
             <v-card-title>
-            Add Product
+                {{savemode}}
             </v-card-title>
             <v-card-text>
                 <v-row>
                     <v-col cols="2">
                     <v-text-field
-                        name="code"
+                        name="product_code"
                         label="product_code"
                         id="product_code"
-                        v-model="postdata.code"
+                        v-model="postdata.product_code"
                     ></v-text-field>
                     </v-col>
                     <v-col cols="10">
@@ -64,13 +62,14 @@
                         name="product_name"
                         label="product_name"
                         id="product_name"
-                        v-model="postdata.name"
+                        v-model="postdata.product_name"
                         ></v-text-field>
                     </v-col>
                     <v-col cols="12">
                         <v-file-input
                         accept="image/*"
                         label="product_img"
+                        v-model="postdata.product_img"
                         ></v-file-input>
                     </v-col>
                     <v-col cols="6">
@@ -118,7 +117,7 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="error" text @click="closeItem()"> cancel </v-btn>
-                <v-btn color="success" text @click="saveSelect()"> add </v-btn>
+                <v-btn color="success" text @click="saveSelect()"> select </v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -138,6 +137,7 @@ export default {
     },
     data() {
         return {
+            id:'',
             dialogedit: false,
             product: [],
             order: [],
@@ -167,10 +167,17 @@ export default {
                     gender: '',
                 },
             },
+            role: '',
         }
     },
     created() {
       this.getData()
+      this.role = localStorage.getItem("role")
+    },
+    computed: {
+        savemode() {
+            return this.id == '' ? 'Add Product' : 'Edit Product'
+        }
     },
     methods: {
         async getData() {
@@ -179,13 +186,14 @@ export default {
                 console.log(response)
                 this.product = response.data.data.map((products) => ({
                     id: products._id,
-                    code: products.product_code,
-                    name: products.product_name,
+                    product_code: products.product_code,
+                    product_name: products.product_name,
                     price: products.price,
                     amount: products.amount,
                     detail: products.detail,
-                    linkimg: `http://localhost:3000/images/${products.product_img}`,
+                    product_img: `http://localhost:3000/images/${products.product_img}`,
                 }));
+                // this.role = localStorage.getItem("role")
             } catch (error) {
                 console.error("Error fetching products:", error);
             }
@@ -200,13 +208,22 @@ export default {
             console.log(item.id)
           }
         },
-        goToCart() {
-          this.$router.push({ name: 'cart', state: { order: this.order } });
-        },
         newProduct() {
           this.id = ''
           this.postdata = {...this.postdefault}
           this.dialogedit = true
+        },
+        closeItem() {
+            this.id = ''
+            this.postdata = {...this.postdefault}
+            this.dialogedit = false
+            // this.dialogdelete = false
+        },
+        editItem(item) {
+            this.id = item.id
+            this.postdata = {...item}
+            console.log(item)
+            this.dialogedit = true
         },
         saveSelect() {
             if(this.id != '') {
@@ -233,7 +250,7 @@ export default {
         },
         async savePutData() {
             try {
-                const {data} = await this.axios.put('http://localhost:3000/products/'+this.id, this.postdata, {
+                const {data} = await this.axios.put('http://localhost:3000/products/'+this.postdata.id, this.postdata, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`
                     },
@@ -246,17 +263,6 @@ export default {
                 console.log(err)
                 alert(err)
             }
-        },
-        closeItem() {
-            this.id = ''
-            this.postdata = {...this.postdefault}
-            this.dialogedit = false
-            // this.dialogdelete = false
-        },
-        editItem(item) {
-            this.id = item._id
-            this.postdata = {...item}
-            this.dialogedit = true
         },
     }
 }

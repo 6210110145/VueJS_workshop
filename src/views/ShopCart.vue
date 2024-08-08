@@ -11,9 +11,6 @@
             <th class="text-left">
                 Name
             </th>
-            <!-- <th class="text-left">
-                price
-            </th> -->
             <th class="text-left">
                 amount
             </th>
@@ -21,7 +18,7 @@
                 price
             </th>
             <th class="text-center">
-                add
+                action
             </th>
         </tr>
       </thead>
@@ -31,7 +28,7 @@
           :key="index"
         >
             <td>{{ item.product_name }}</td>
-            <td>{{ amount }}</td>
+            <td>{{ item.amount_order }}</td>
             <td>{{ item.price }}</td>
             <td class="text-center"> 
                 <v-btn text color="success" @click="addProduct(item.product_name)">+</v-btn> 
@@ -43,11 +40,11 @@
     </template>
   </v-simple-table>
     <div class="d-flex flex-column justify-space-between text-right mt-3 mb-3 mr-10">
-        <body-1> ราคาทั้งหมด: {{total}} บาท</body-1>
+        <body-1> ราคาทั้งหมด: {{total()}} บาท</body-1>
     </div>
 
     <div class="d-flex flex-column justify-space-between text-right mt-3 mb-3 mr-10 ml-10">
-        <v-btn color="success" @click="showOrder()"> ยืนยันออเดอร์ </v-btn>
+        <v-btn color="success" @click="postOrder()"> ยืนยันออเดอร์ </v-btn>
     </div>
 
   </div>
@@ -57,30 +54,22 @@
 export default {
     data() {
         return {
-            // order: [{
-            //     product_name: 'เสื้อยืดคอกลมสีขาว',
-            //     amount: 1,
-            //     price: 170
-            // },{
-            //     product_name: 'เสื้อยืดคอกลมสีดำ',
-            //     amount: 1,
-            //     price: 150
-            // }
-            // ],
             product: [],
             priceTotal: 0,
             order: [],
             id: [],
-            amount: 1
+            postdata: {
+                product: []
+            }
         }
     },
-    created() {
-        this.getData()
+    async created() {
+        await this.getData()
     },
     computed: {
         // total() {
         //     for(let i=0; i < this.order.length; i++) {
-        //         this.priceTotal += (this.order[i].price * this.order[i].amount)
+        //         this.priceTotal += (this.product[i].price * this.postdata.product.amount)
         //     }
         //     return this.priceTotal
         // }
@@ -89,17 +78,16 @@ export default {
         addProduct(item){
             for (let product of this.order) {
                 if(item == product.product_name) {
-                    this.amount += 1
-                    console.log(this.order)
+                    this.postdata.product.amount += 1
                 }
             }
         },
         reduceProduct(item) {
             for (let product of this.order) {
                 if(item == product.product_name) {
-                    this.amount -= 1
-                    if(product.amount < 0) {
-                        this.amount = 0
+                    this.postdata.product.amount -= 1
+                    if(this.postdata.product.amount < 0) {
+                        this.postdata.product.amount = 0
                     }
                     console.log(this.order)
                 }
@@ -113,14 +101,26 @@ export default {
                     break;
             }
         },
-        showOrder() {
-            console.log(this.order)
+        async postOrder() {
+            console.log(this.postdata)
+            try {
+                await this.axios.post('http://localhost:3000/orders', this.postdata, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    },
+                })
+                alert('order complete')
+                this.postdata = ''
+                this.order = []
+            }catch (err) {
+                alert(err)
+            }
         },
-        getData() {
+        async getData() {
             this.id = localStorage.getItem("order")
             const splitArray = this.id.split(',');
             for(let i=0; i < splitArray.length; i++) {
-                this.axios.get(`http://localhost:3000/products/${splitArray[i]}`, {
+                await this.axios.get(`http://localhost:3000/products/${splitArray[i]}`, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`
                     }
@@ -128,35 +128,21 @@ export default {
                     this.order.push(response.data.data)
                     console.log(this.order)
                 })
-                // console.log(splitArray[i])
             }
+            this.postdata.product = await this.order.map((orders) => ({
+                product_name: orders.product_name,
+                amount: orders.amount_order
+            }))
+            console.log(this.postdata.product)
+        },
+        total() {
+            return this.order.reduce((acc, item) => acc + item.price * item.amount_order, 0);
+            // for(let i=0; i < 2; i++) {
+            //    this.priceTotal += (this.order[i].price * this.order[i].amount)
+            // }
+            // console.log(this.priceTotal)
+            // return this.priceTotal
         }
-        // total() {
-            // return this.order.reduce((acc, item) => acc + item.price * item.amount, 0);
-        //     for(let i=0; i < 2; i++) {
-        //         this.priceTotal += (this.order[i].price * this.order[i].amount)
-        //     }
-        //     console.log(this.priceTotal)
-        //     // return this.priceTotal
-        // }
-        // async getData() {
-        //     try {
-        //         const response = await this.axios.get("http://localhost:3000/orders/66a866e37af4f6ff5bc14056", {
-        //             headers: {
-        //                 Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIkMmIkMTAkazU1WUdzcVdsei82aENiVU9USzFyLnZTZmJRelouSktVOHdSQU1VQzRNdmhJZVdQYi5UcG0iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MjE5NjU5Nzd9.cI1D5-9Tk9vgje9GFwGlJ9SrnfKHZUCOErREDC-40ng`
-        //             },
-        //         });
-        //         this.product = response.data.data.product
-        //         this.priceTotal = response.data.data.priceTotal
-        //         this.order = this.product.map((orders) => ({
-        //             id: orders._id,
-        //             name: orders.product_name,
-        //             amount: orders.amount,
-        //         }));
-        //     } catch (error) {
-        //         console.error("Error fetching products:", error);
-        //     }
-        // }
     }
 }
 </script>

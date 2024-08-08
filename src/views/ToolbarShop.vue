@@ -31,15 +31,16 @@
                 <v-btn text @click="editRegister()">register</v-btn>
             </div>
             <div v-else>
-                <v-btn text > profile </v-btn>
+                <router-link to="/me">
+                    <v-btn text> profile </v-btn>
+                </router-link>
             </div>
             
-
-            <!-- <router-link to="/cart">
+            <router-link to="/cart">
                 <v-btn icon>
                     <v-icon>mdi-cart</v-icon>
                 </v-btn>
-            </router-link>  -->
+            </router-link> 
 
             <v-menu 
             offset-y
@@ -55,9 +56,14 @@
                 </template>
                 <v-list>
                     <v-list-item
-                    v-for="(item, index) in items"
+                    v-for="(item, index) in menu"
                     :key="index" >
-                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                        <v-list-item-title v-if="headerToken">
+                            <v-btn  text color="error" @click="logout()"> logout </v-btn>
+                        </v-list-item-title>
+                        <v-list-item-title v-else>
+                            <v-btn  text color="success" @click="editLogin()"> login </v-btn>
+                        </v-list-item-title>
                     </v-list-item>
                 </v-list>
             </v-menu>
@@ -219,6 +225,7 @@ export default {
             },
             id: '',
             items: ['admin', 'user'],
+            menu: ['logout'],
             show1: false,
             dialogLogin: false,
             dialogRegister: false,
@@ -230,6 +237,9 @@ export default {
             },
             headerToken: '',
         } 
+    },
+    created() {
+        this.headerToken = localStorage.getItem('token')
     },
     methods: {
         closeItem() {
@@ -248,7 +258,8 @@ export default {
                 await this.axios.post('http://localhost:3000/users/login', this.postdata)
                 .then((res) => {
                     console.log(res.data.message)
-                    localStorage.setItem("token", res.data.token);
+                    localStorage.setItem("token", res.data.token)
+                    localStorage.setItem("role", res.data.role)
                     this.headerToken = localStorage.getItem("token")
                     alert(res.data.message)
                     this.closeItem()
@@ -267,6 +278,11 @@ export default {
             }catch (err) {
                 alert(err)
             }
+        },
+        logout() {
+            localStorage.removeItem('token')
+            localStorage.removeItem('role')
+            this.headerToken = localStorage.getItem("token")
         }
     },
     computed: {

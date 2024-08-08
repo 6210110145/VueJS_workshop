@@ -72,7 +72,8 @@ export default {
                 await this.axios.post('http://localhost:3000/users/login', this.postdata, {
                 }).then((res) => {
                     console.log(res.data.message)
-                    localStorage.setItem("token", res.data.token);
+                    localStorage.setItem("token", res.data.token)
+                    localStorage.setItem("username", res.data.name)
                     alert(res.data.message)
                     this.closeItem()
                 })
