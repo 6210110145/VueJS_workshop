@@ -14,7 +14,7 @@
             width="350"
             class="ml-2">
                 <v-img 
-                :src="item.name_img"
+                :src="item.linkimage"
                 width="350"
                 height="300">
                 </v-img>
@@ -34,6 +34,7 @@
                         <v-btn text color="info" @click.once="addCart(item)"> add cart </v-btn>
                         <div v-if="role == 'admin'">
                             <v-btn text color="success" @click="editItem(item)"> edit </v-btn>
+                            <v-btn text color="error" @click="deleteItem(item)"> delete </v-btn>
                         </div>
                     </v-card-actions>
             </v-card>
@@ -68,8 +69,9 @@
                     <v-col cols="12">
                         <v-file-input
                         accept="image/*"
-                        label="name_img"
-                        v-model="postdata.name_img"
+                        placeholder="Pick a photo"
+                        label="product_img"
+                        v-model="postdata.product_img"
                         ></v-file-input>
                     </v-col>
                     <v-col cols="6">
@@ -122,23 +124,35 @@
         </v-card>
     </v-dialog>
 
-    <div v-if="Login">
-        <shop-login-vue />
-    </div>
+    <v-dialog
+    v-model="dialogdelete"
+    max-width="500px">
+        <v-card>
+            <v-card-title primary-title>
+                Do you want Delete?
+            </v-card-title>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn text color="error" @click="closeItem()"> No </v-btn>
+                <v-btn text color="success" @click="deleteData()"> Yes </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-import ShopLoginVue from '@/components/ShopLogin.vue'
-// import ShopLoginVue
+// import ShopLoginVue from '@/components/ShopLogin.vue'
+
 export default {
     components: {
-      ShopLoginVue
+    //   ShopLoginVue
     },
     data() {
         return {
             id:'',
             dialogedit: false,
+            dialogdelete: false,
             product: [],
             product_response: [],
             order: [],
@@ -147,7 +161,7 @@ export default {
             postdata: { // ชุดไว้ส่งข้อมูล
                 product_code: '',
                 product_name: '',
-                name_img: '',
+                linkimage: '',
                 product_img: '',
                 price: 100,
                 amount: 100,
@@ -157,10 +171,10 @@ export default {
                     gender: '',
                 },
             },
-            postdefault: { // ชุดไว้ล้างข้อมูล
+            postdefault: { // ชุดข้อมูลว่าง เพื่อเพิ่มข้อมูลใหม่
                 product_code: '',
                 product_name: '',
-                name_img: '',
+                linkimage: '',
                 product_img: '',
                 price: 100,
                 amount: 100,
@@ -193,7 +207,7 @@ export default {
                     price: products.price,
                     amount: products.amount,
                     detail: products.detail,
-                    name_img: `http://localhost:3000/images/${products.product_img}`,
+                    linkimage: `http://localhost:3000/images/${products.product_img}`,
                     product_img: products.product_img,
                 }));
                 // this.role = localStorage.getItem("role")
@@ -219,22 +233,27 @@ export default {
             this.id = ''
             this.postdata = {...this.postdefault}
             this.dialogedit = false
-            // this.dialogdelete = false
+            this.dialogdelete = false
         },
         editItem(item) {
             this.id = item.id
             this.postdata = {...item}
-            console.log(item)
             this.dialogedit = true
         },
+        deleteItem(item) {
+            this.id = item.id
+            this.postdata = {...item}
+            this.dialogdelete = true
+        },
         saveSelect() {
-            if(this.postdata.id != '') {
+            if(this.id != '') {
                 this.savePutData()
             }else {
                 this.savePostData()
             }
         },
         async savePostData() {
+            console.log(this.postdata)
             try {
                 const {data} = await this.axios.post('http://localhost:3000/products/', this.postdata, {
                     headers: {
@@ -251,7 +270,6 @@ export default {
             }
         },
         async savePutData() {
-            // console.log(this.postdata)
             try {
                 const {data} = await this.axios.put('http://localhost:3000/products/'+this.postdata.id, this.postdata, {
                     headers: {
@@ -267,6 +285,21 @@ export default {
                 alert(err)
             }
         },
+        async deleteData() {
+            try {
+                await this.axios.delete('http://localhost:3000/products/'+this.postdata.id, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+                }).then((response) => {
+                    alert(response.data.message)
+                    this.closeItem()
+                    this.getData()
+                })
+            }catch (err) {
+                alert(err)
+            }
+        }
     }
 }
 </script>

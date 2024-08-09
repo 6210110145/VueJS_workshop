@@ -66,12 +66,7 @@ export default {
         await this.getData()
     },
     computed: {
-        // total() {
-        //     for(let i=0; i < this.order.length; i++) {
-        //         this.priceTotal += (this.product[i].price * this.postdata.product.amount)
-        //     }
-        //     return this.priceTotal
-        // }
+        
     },
     methods: {
         async getData() {

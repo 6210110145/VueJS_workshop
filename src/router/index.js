@@ -46,12 +46,12 @@ const routes = [
         name: 'cart',
         component: () => import('../views/ShopCart.vue')
       },
+      {
+        path: '/me',
+        name: 'me',
+        component: () => import('../views/Me.vue')
+      },
     ]
-  },
-  {
-    path: '/me',
-    name: 'me',
-    component: () => import('../views/Me.vue')
   },
 ]
 
