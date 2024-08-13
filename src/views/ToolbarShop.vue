@@ -12,7 +12,10 @@
 
             <v-toolbar-title >
                 <router-link to="/shop">
-                    <v-btn text>
+                    <v-btn
+                    class="ma-2"
+                    outlined
+                    color="indigo">
                         Shop Store
                     </v-btn>
                 </router-link>
@@ -246,7 +249,7 @@ export default {
         } 
     },
     created() {
-        this.headerToken = localStorage.getItem('token')
+        this.headerToken = this.$cookies.get("token")
     },
     methods: {
         closeItem() {
@@ -265,9 +268,9 @@ export default {
                 await this.axios.post('http://localhost:3000/users/login', this.postdata)
                 .then((res) => {
                     console.log(res.data.message)
-                    localStorage.setItem("token", res.data.token)
-                    localStorage.setItem("role", res.data.role)
-                    this.headerToken = localStorage.getItem("token")
+                    this.$cookies.set("token", res.data.token, "600s")
+                    this.$cookies.set("role", res.data.role, "600s")
+                    this.headerToken = this.$cookies.get("token")
                     alert(res.data.message)
                     this.closeItem()
                     location.reload()
@@ -288,9 +291,9 @@ export default {
             }
         },
         logout() {
-            localStorage.removeItem('token')
-            localStorage.removeItem('role')
-            this.headerToken = localStorage.getItem("token")
+            this.$cookies.remove("token")
+            this.$cookies.remove("role")
+            this.headerToken = this.$cookies.get("token")
             location.reload()
         }
     },

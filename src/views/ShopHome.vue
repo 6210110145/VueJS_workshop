@@ -68,6 +68,9 @@
                     </v-col>
                     <v-col cols="12">
                         <v-file-input
+                        prepend-icon="mdi-camera"
+                        name="product_img"
+                        id="product_img"
                         accept="image/*"
                         placeholder="Pick a photo"
                         label="product_img"
@@ -156,13 +159,12 @@ export default {
             product: [],
             product_response: [],
             order: [],
-            token: '',
             Login: false,
             postdata: { // ชุดไว้ส่งข้อมูล
                 product_code: '',
                 product_name: '',
                 linkimage: '',
-                product_img: '',
+                product_img: [],
                 price: 100,
                 amount: 100,
                 detail:{
@@ -189,7 +191,7 @@ export default {
     },
     created() {
       this.getData()
-      this.role = localStorage.getItem("role")
+      this.role = this.$cookies.get("role")
     },
     computed: {
         savemode() {
@@ -207,16 +209,15 @@ export default {
                     price: products.price,
                     amount: products.amount,
                     detail: products.detail,
-                    linkimage: `http://localhost:3000/images/${products.product_img}`,
-                    product_img: products.product_img,
+                    linkimage: products.product_img.url,
+                    product_img: products.product_img.name,
                 }));
-                // this.role = localStorage.getItem("role")
             } catch (error) {
                 console.error("Error fetching products:", error);
             }
         },
         addCart(item) {
-          if(!localStorage.getItem("token")) {
+          if(!this.$cookies.get("token")) {
             this.Login = true
           }else {
             this.order.push(item.id);
@@ -253,27 +254,75 @@ export default {
             }
         },
         async savePostData() {
-            console.log(this.postdata)
-            try {
-                const {data} = await this.axios.post('http://localhost:3000/products/', this.postdata, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
-                    },
-                })
-                console.log(data)
-                this.getData()
-                this.closeItem()
-                alert('add product complete')
-            }catch (err) {
-                console.log(err)
-                alert(err)
-            }
+            // Create a new FormData object
+            const formData = new FormData()
+
+            // Append the form fields to the FormData object
+            formData.append('product_code', this.postdata.product_code)
+            formData.append('product_name', this.postdata.product_name)
+            formData.append('product_img', this.postdata.product_img)
+            formData.append('price', this.postdata.price)
+            formData.append('amount', this.postdata.amount)
+            formData.append('detail[type]', this.postdata.detail.type)
+            formData.append('detail[color]', this.postdata.detail.color)
+            formData.append('detail[gender]', this.postdata.detail.gender)
+            // if (this.postdata.product_img) {
+            //     try{
+            //         const reader = new FileReader();
+            //         reader.readAsDataURL(this.postdata.product_img);
+            //         reader.onload = async () => {
+            //             const base64Image = reader.result;
+            //             const dataToSend = {
+            //                 ...this.postdata,
+            //                 product_img: base64Image, // Add base64 image data
+            //             };
+
+            //             await this.axios.post('http://localhost:3000/products/', dataToSend, {
+            //                 headers: {
+            //                     Authorization: `Bearer ${localStorage.getItem("token")}`
+            //                 },
+            //             }).then((response) => {
+            //                 this.getData()
+            //                 this.closeItem()
+            //                 alert(response.data.message)
+            //             })
+            //         }
+            //     } catch (err) {
+            //         console.log(err)
+            //         alert(err)
+            //     } 
+            // }
+                try {
+                    await this.axios.post('http://localhost:3000/products/', formData, {
+                        headers: {
+                            Authorization: `Bearer ${this.$cookies.get("token")}`
+                        },
+                    }).then((response) => {
+                        console.log(response)
+                        this.getData()
+                        this.closeItem()
+                        alert(response.data.message)
+                    })
+                }catch (err) {
+                    console.log(err)
+                    alert(err)
+                }
         },
         async savePutData() {
+            const formData = new FormData()
+
+            formData.append('product_code', this.postdata.product_code)
+            formData.append('product_name', this.postdata.product_name)
+            formData.append('product_img', this.postdata.product_img)
+            formData.append('price', this.postdata.price)
+            formData.append('amount', this.postdata.amount)
+            formData.append('detail[type]', this.postdata.detail.type)
+            formData.append('detail[color]', this.postdata.detail.color)
+            formData.append('detail[gender]', this.postdata.detail.gender)
             try {
-                const {data} = await this.axios.put('http://localhost:3000/products/'+this.postdata.id, this.postdata, {
+                const {data} = await this.axios.put('http://localhost:3000/products/'+this.postdata.id, formData, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                        Authorization: `Bearer ${this.$cookies.get("token")}`
                     },
                 })
                 console.log(data)
@@ -289,7 +338,7 @@ export default {
             try {
                 await this.axios.delete('http://localhost:3000/products/'+this.postdata.id, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                        Authorization: `Bearer ${this.$cookies.get("token")}`
                     }
                 }).then((response) => {
                     alert(response.data.message)

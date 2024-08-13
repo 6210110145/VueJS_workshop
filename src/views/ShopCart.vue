@@ -75,7 +75,7 @@ export default {
             for(let i=0; i < splitArray.length; i++) {
                 await this.axios.get(`http://localhost:3000/products/${splitArray[i]}`, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                        Authorization: `Bearer ${this.$cookies.get("token")}`
                     }
                 }).then((response) => {
                     this.order.push(response.data.data)
@@ -124,7 +124,7 @@ export default {
             try {
                 await this.axios.post('http://localhost:3000/orders', this.postdata, {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                        Authorization: `Bearer ${this.$cookies.get("token")}`
                     },
                 })
                 alert('order complete')
