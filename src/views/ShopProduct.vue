@@ -37,8 +37,6 @@
         <v-card-actions>
             <div v-if="role == 'admin'">
                 <v-btn text color="primary" @click="dialogAddImage = true"> add image </v-btn>
-                <v-btn text color="success" @click="editItem(item)"> edit </v-btn>
-                <v-btn text color="error" @click="deleteItem(item)"> delete </v-btn>
             </div>
             <v-spacer></v-spacer>
             <v-btn
@@ -73,6 +71,7 @@
         <v-card-text>
             <p> Add Image Here </p>
             <v-file-input
+            show-size
             prepend-icon="mdi-camera"
             name="newImage"
             id="newImage"
@@ -84,7 +83,7 @@
         </v-card-text>
         <v-card-actions>
             <v-btn color="success" @click="addImage()"> add </v-btn>
-            <v-btn color="error" @click="dialogAddImage = false">close</v-btn>
+            <v-btn color="error" @click="dialogAddImage = false"> close </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -160,24 +159,28 @@ export default {
             }
         },
         async addImage() {
-            const formData = new FormData()
-            formData.append('username', this.username)
-            formData.append('product_img', this.newImage)
+            if(this.newImage) {
+                const formData = new FormData()
+                formData.append('username', this.username)
+                formData.append('product_img', this.newImage)
 
-            try {
-                await this.axios.put('http://localhost:3000/products/images/'+this.product._id, formData, {
-                    headers: {
-                        Authorization: `Bearer ${this.$cookies.get("token")}`
-                    }
-                }).then((response) => {
-                    console.log(response.data.data)
-                    alert(response.data.message)
-                    this.getProduct()
-                    location.reload()
-                })
-            }catch(err) {
-                alert(err.message)
-                console.log(err)
+                try {
+                    await this.axios.put('http://localhost:3000/products/images/'+this.product._id, formData, {
+                        headers: {
+                            Authorization: `Bearer ${this.$cookies.get("token")}`
+                        }
+                    }).then((response) => {
+                        console.log(response.data.data)
+                        alert(response.data.message)
+                        this.getProduct()
+                        location.reload()
+                    })
+                }catch(err) {
+                    alert(err.message)
+                    console.log(err)
+                }
+            }else {
+                alert('insert image')
             }
         }
     }

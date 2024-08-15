@@ -13,7 +13,7 @@ const routes = [
   {
     path: '',
     name: 'toolbar',
-    component: () => import('../views/ToolbarShop.vue'),
+    component: () => import('../views/ShopToolbar.vue'),
     children: [
       {
         path: '/about',
@@ -47,9 +47,9 @@ const routes = [
         component: () => import('../views/ShopCart.vue')
       },
       {
-        path: '/me',
-        name: 'me',
-        component: () => import('../views/Me.vue')
+        path: '/profile/:id',
+        name: 'profile',
+        component: () => import('../views/ShopProfile')
       },
       {
         path: '/product/:id',
@@ -57,6 +57,11 @@ const routes = [
         component: () => import('../views/ShopProduct.vue')
       },
     ]
+  },
+  {
+    path: '/me',
+    name: 'me',
+    component: () => import('../views/Me.vue')
   },
 ]
 

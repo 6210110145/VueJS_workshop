@@ -41,9 +41,7 @@
                 <v-btn text @click="editRegister()">register</v-btn>
             </div>
             <div v-else>
-                <router-link to="/me">
-                    <v-btn text> profile </v-btn>
-                </router-link>
+                <v-btn text @click.once="navigateToProfile('/profile/'+user_id)"> profile </v-btn>
             </div>
             
             <div v-if="order">
@@ -63,7 +61,6 @@
                 </router-link>
             </div>
              
-
             <v-menu 
             offset-y
             open-on-hover
@@ -81,7 +78,7 @@
                     v-for="(item, index) in menu"
                     :key="index" >
                         <v-list-item-title v-if="headerToken">
-                            <v-btn  text color="error" @click.once="logout('/shop')"> logout </v-btn>
+                            <v-btn  text color="error" @click.once="logout('/')"> logout </v-btn>
                         </v-list-item-title>
                         <v-list-item-title v-else>
                             <v-btn  text color="success" @click="editLogin()"> login </v-btn>
@@ -211,7 +208,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="error" text @click="closeItem()"> cancel</v-btn>
-                    <v-btn color="success" text @click="registerUser()()"> submit </v-btn>
+                    <v-btn color="success" text @click="registerUser()"> submit </v-btn>
                     <!-- <v-btn color="" text @click="deleteData()"> delete </v-btn> -->
                 </v-card-actions>
             </v-card>
@@ -245,7 +242,7 @@ export default {
                 gender: '',
                 role: ''
             },
-            id: '',
+            user_id: 0,
             order: [],
             items: ['admin', 'user'],
             menu: ['logout'],
@@ -264,6 +261,7 @@ export default {
     created() {
         this.headerToken = this.$cookies.get("token")
         this.order = localStorage.getItem("order")
+        this.user_id = this.$cookies.get("userID")
     },
     methods: {
         closeItem() {
@@ -281,14 +279,15 @@ export default {
             try {
                 await this.axios.post('http://localhost:3000/users/login', this.postdata)
                 .then((res) => {
-                    console.log(res.data.message)
                     localStorage.setItem("username", this.postdata.username)
+                    this.$cookies.set("userID", res.data.data._id, "6000s")
                     this.$cookies.set("token", res.data.token, "6000s")
                     this.$cookies.set("role", res.data.role, "6000s")
                     this.headerToken = this.$cookies.get("token")
+                    this.user_id = this.$cookies.get("userID")
                     alert(res.data.message)
                     this.closeItem()
-                    location.reload()
+                    // location.reload()
                 })
             }catch (err) {
                 console.log(err)
@@ -308,10 +307,14 @@ export default {
         logout(route) {
             this.$cookies.remove("token")
             this.$cookies.remove("role")
+            this.$cookies.remove("userID")
             localStorage.removeItem("username")
             this.headerToken = this.$cookies.get("token")
             this.$router.push(route)
-            // location.reload()
+            location.reload()
+        },
+        navigateToProfile(route) {
+            this.$router.push(route)
         }
     },
     computed: {
