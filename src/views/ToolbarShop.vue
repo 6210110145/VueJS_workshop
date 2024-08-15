@@ -81,7 +81,7 @@
                     v-for="(item, index) in menu"
                     :key="index" >
                         <v-list-item-title v-if="headerToken">
-                            <v-btn  text color="error" @click="logout()"> logout </v-btn>
+                            <v-btn  text color="error" @click.once="logout('/shop')"> logout </v-btn>
                         </v-list-item-title>
                         <v-list-item-title v-else>
                             <v-btn  text color="success" @click="editLogin()"> login </v-btn>
@@ -282,6 +282,7 @@ export default {
                 await this.axios.post('http://localhost:3000/users/login', this.postdata)
                 .then((res) => {
                     console.log(res.data.message)
+                    localStorage.setItem("username", this.postdata.username)
                     this.$cookies.set("token", res.data.token, "6000s")
                     this.$cookies.set("role", res.data.role, "6000s")
                     this.headerToken = this.$cookies.get("token")
@@ -304,11 +305,13 @@ export default {
                 alert(err)
             }
         },
-        logout() {
+        logout(route) {
             this.$cookies.remove("token")
             this.$cookies.remove("role")
+            localStorage.removeItem("username")
             this.headerToken = this.$cookies.get("token")
-            location.reload()
+            this.$router.push(route)
+            // location.reload()
         }
     },
     computed: {

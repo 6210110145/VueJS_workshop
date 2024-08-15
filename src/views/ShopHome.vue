@@ -193,6 +193,9 @@ export default {
     created() {
       this.getData()
       this.role = this.$cookies.get("role")
+
+      let product_id = localStorage.getItem("order")
+      this.order = product_id.split(',');
     },
     computed: {
         savemode() {
@@ -229,9 +232,10 @@ export default {
             if(!this.$cookies.get("token")) {
                 alert("Please login")
             }else {
-                this.order.push(item.id);
-                localStorage.setItem("order", this.order)
                 // console.log(item.id)
+                this.order.push(item.id);
+                // console.log(this.order)
+                localStorage.setItem("order", this.order)
             }
         },
         newProduct() {

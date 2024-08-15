@@ -10,13 +10,6 @@
         outlined
     >
         <v-list-item three-line>
-            
-
-            <!-- <v-list-item-avatar
-                tile
-                size="80"
-                color="grey"
-            ></v-list-item-avatar> -->
             <v-list-item-title>
                 <v-carousel
                 height="300">
@@ -26,6 +19,7 @@
                         :src="item.linkimage"
                         reverse-transition="fade-transition"
                         transition="fade-transition"
+                        @click="openDialog(item)"
                     ></v-carousel-item>
                 </v-carousel>
                 <v-list-item-content>
@@ -41,6 +35,11 @@
         </v-list-item>
 
         <v-card-actions>
+            <div v-if="role == 'admin'">
+                <v-btn text color="primary" @click="dialogAddImage = true"> add image </v-btn>
+                <v-btn text color="success" @click="editItem(item)"> edit </v-btn>
+                <v-btn text color="error" @click="deleteItem(item)"> delete </v-btn>
+            </div>
             <v-spacer></v-spacer>
             <v-btn
                 class="mr-6"
@@ -48,10 +47,47 @@
                 rounded
                 icon
             >
-                <v-icon @click="addCart(product)">mdi-cart-arrow-down</v-icon>
+                <v-icon @click.once="addCart(product)">mdi-cart-arrow-down</v-icon>
             </v-btn>
         </v-card-actions>
     </v-card>
+
+    <v-dialog v-model="dialogImage" max-width="600px">
+      <v-card>
+        <v-card-text>
+            <v-img :src="selectImage.linkimage"></v-img>
+        </v-card-text>
+        <v-card-actions>
+            <v-btn color="error" @click="deleteImage(selectImage)">delete</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="dialogImage = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+        v-model="dialogAddImage"
+        max-width="500px"
+    >
+        <v-card>
+        <v-card-text>
+            <p> Add Image Here </p>
+            <v-file-input
+            prepend-icon="mdi-camera"
+            name="newImage"
+            id="newImage"
+            accept="image/*"
+            placeholder="Pick a photo"
+            label="newImage"
+            v-model="newImage"
+            ></v-file-input>
+        </v-card-text>
+        <v-card-actions>
+            <v-btn color="success" @click="addImage()"> add </v-btn>
+            <v-btn color="error" @click="dialogAddImage = false">close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -59,16 +95,29 @@
 export default {
     data() {
         return {
+            role: '',
+            username: '',
             product_id: 0,
             productResponse: [],
             productImage: [],
             product: [],
-            order: '',
+            order: [],           
+            dialogImage: false,
+            dialogAddImage: false,
+            selectImage: {},
+            newImage: '',
         }
     },
     created() {
+        this.role = this.$cookies.get("role")
+        this.username = localStorage.getItem("username")
         this.product_id = this.$route.params.id
         this.getProduct()
+
+        if(localStorage.getItem("order")) {
+            let _id = localStorage.getItem("order")
+            this.order = _id.split(',');
+        }
     },
     methods: {
         async getProduct() {
@@ -78,17 +127,59 @@ export default {
                 },
             });
             this.product = this.productResponse.data.data
-            // console.log(this.product)
             this.productImage = this.product.product_img.map((item) => ({
                 linkimage: `http://localhost:3000/${item.url}`,
-                nameimage: item.name
+                name: item.name,
+                id: item._id,
             }))
-            // console.log(this.productImage)
         },
         addCart(item) {
-            this.order.push(item.id);
+            this.order.push(item._id);
+            console.log(this.order)
             localStorage.setItem("order", this.order)
         },
+        openDialog(item){
+            this.dialogImage = true
+            this.selectImage = item
+        },
+        async deleteImage(item) {
+            console.log(item)
+            console.log(this.product._id)
+            try {
+                await this.axios.put('http://localhost:3000/products/image/'+this.product._id, item, {
+                    headers: {
+                        Authorization: `Bearer ${this.$cookies.get("token")}`
+                    },
+                }).then((response) => {
+                    alert(response.data.message)
+                    this.getProduct()
+                    location.reload()
+                })
+            }catch (err) {
+                alert(err)
+            }
+        },
+        async addImage() {
+            const formData = new FormData()
+            formData.append('username', this.username)
+            formData.append('product_img', this.newImage)
+
+            try {
+                await this.axios.put('http://localhost:3000/products/images/'+this.product._id, formData, {
+                    headers: {
+                        Authorization: `Bearer ${this.$cookies.get("token")}`
+                    }
+                }).then((response) => {
+                    console.log(response.data.data)
+                    alert(response.data.message)
+                    this.getProduct()
+                    location.reload()
+                })
+            }catch(err) {
+                alert(err.message)
+                console.log(err)
+            }
+        }
     }
 }
 </script>

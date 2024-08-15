@@ -81,8 +81,10 @@ export default {
                     this.order.push(response.data.data)
                 })
             }
+            console.log(this.order)
             this.postdata.product = await this.order.map((orders) => ({
                 id: orders._id,
+                linkimage: `http://localhost:3000/${orders.product_img.url}`,
                 product_name: orders.product_name,
                 price: orders.price,
                 amount: 1
@@ -108,22 +110,34 @@ export default {
             }
         },
         deleteProduct(item) {
-            // let id = localStorage.getItem("order")
-            // let splitArray = id.split(',')
-            // splitArray = splitArray.filter((array) => {
-            //     array !== String(item.id)
-            // })
-            // console.log(item.id)
-            // console.log(splitArray)
+            // remove in order localstorage
+            let id = localStorage.getItem("order")
+            let idArray = id.split(',')
+            let tempArray = []
+            this.order = []
+
+            while (idArray.length > 0) {
+                let lastElement = idArray.pop();
+                if (lastElement !== item.id) {
+                    tempArray.push(lastElement);
+                }
+            }
+             
+            localStorage.removeItem('order')          
+            tempArray.forEach((element) => {
+                this.order.push(element)
+                console.log(element)
+            });
+            localStorage.setItem('order', this.order)
+
+            // remove in postdata
             for (let i=0; i < this.postdata.product.length; i++) {
                 if(this.postdata.product[i].product_name == item.product_name) {
                     this.postdata.product.splice(i,1);
                     break
                 }
-                this.order.push(this.postdata.product[i].id);
-                localStorage.setItem("order", this.order)
-                console.log(this.postdata.product[i].id)
-            }   
+            }
+            // window.location.reload();
         },
         async postOrder() {
             console.log(this.postdata)
