@@ -46,11 +46,23 @@
                 </router-link>
             </div>
             
-            <router-link to="/cart">
-                <v-btn icon>
-                    <v-icon>mdi-cart</v-icon>
-                </v-btn>
-            </router-link> 
+            <div v-if="order">
+                <v-badge right color="primary">
+                    <router-link to="/cart">
+                        <v-btn icon>
+                            <v-icon>mdi-cart</v-icon>
+                        </v-btn>
+                    </router-link>
+                </v-badge>
+            </div>
+            <div v-else>
+                <router-link to="/cart">
+                    <v-btn icon>
+                        <v-icon>mdi-cart</v-icon>
+                    </v-btn>
+                </router-link>
+            </div>
+             
 
             <v-menu 
             offset-y
@@ -234,6 +246,7 @@ export default {
                 role: ''
             },
             id: '',
+            order: [],
             items: ['admin', 'user'],
             menu: ['logout'],
             show1: false,
@@ -250,6 +263,7 @@ export default {
     },
     created() {
         this.headerToken = this.$cookies.get("token")
+        this.order = localStorage.getItem("order")
     },
     methods: {
         closeItem() {
@@ -268,8 +282,8 @@ export default {
                 await this.axios.post('http://localhost:3000/users/login', this.postdata)
                 .then((res) => {
                     console.log(res.data.message)
-                    this.$cookies.set("token", res.data.token, "600s")
-                    this.$cookies.set("role", res.data.role, "600s")
+                    this.$cookies.set("token", res.data.token, "6000s")
+                    this.$cookies.set("role", res.data.role, "6000s")
                     this.headerToken = this.$cookies.get("token")
                     alert(res.data.message)
                     this.closeItem()

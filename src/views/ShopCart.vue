@@ -33,7 +33,7 @@
             <td class="text-center"> 
                 <v-btn text color="success" @click="addProduct(item.product_name)">+</v-btn> 
                 <v-btn text color="error" @click="reduceProduct(item.product_name)">-</v-btn>
-                <v-btn text color="error" @click="deleteProduct(item.product_name)">delete</v-btn>
+                <v-btn text color="error" @click="deleteProduct(item)">delete</v-btn>
             </td>
         </tr>
       </tbody>
@@ -82,6 +82,7 @@ export default {
                 })
             }
             this.postdata.product = await this.order.map((orders) => ({
+                id: orders._id,
                 product_name: orders.product_name,
                 price: orders.price,
                 amount: 1
@@ -107,17 +108,22 @@ export default {
             }
         },
         deleteProduct(item) {
+            // let id = localStorage.getItem("order")
+            // let splitArray = id.split(',')
+            // splitArray = splitArray.filter((array) => {
+            //     array !== String(item.id)
+            // })
+            // console.log(item.id)
+            // console.log(splitArray)
             for (let i=0; i < this.postdata.product.length; i++) {
-                // const productIdArray = this.product_id.split(',');
-                // if(this.order[i]._id == productIdArray) {
-                //     localStorage.removeItem('order')
-                // }
-                if(this.postdata.product[i].product_name == item) {
+                if(this.postdata.product[i].product_name == item.product_name) {
                     this.postdata.product.splice(i,1);
-                    console.log(this.postdata)
                     break
                 }
-            }
+                this.order.push(this.postdata.product[i].id);
+                localStorage.setItem("order", this.order)
+                console.log(this.postdata.product[i].id)
+            }   
         },
         async postOrder() {
             console.log(this.postdata)
