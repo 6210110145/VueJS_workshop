@@ -12,7 +12,7 @@
         <v-col col="3" v-for="(item, index) in product" :key="index">
             <v-card
             width="350"
-            class="ml-2"
+            class="ml-8"
             @click.once="navigaToShop('/product/' + item.id)">
                 <v-img 
                 :src="item.linkimage"

@@ -7,9 +7,6 @@
         <v-toolbar
         height="70px"
         dense >
-          
-            <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
-
             <v-toolbar-title >
                 <router-link to="/shop">
                     <v-btn
@@ -103,6 +100,7 @@
                             name="username"
                             label="username"
                             id="username"
+                            :rules="[rules.required]"
                             v-model="postdata.username">
                         </v-text-field>
                     </v-col>
@@ -125,6 +123,7 @@
                 </v-row>
             </v-card-text>
             <v-card-actions>
+                <v-btn text color="primary" @click="dialogForgetPassword = true"> forgetpassword? </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn color="error" text @click="closeItem()"> cancel </v-btn>
                 <v-btn color="success" text @click="loginUser()"> login </v-btn>
@@ -136,6 +135,15 @@
     v-model="dialogRegister"
     max-width="500px">
         <v-card>
+            <v-alert
+            v-if="error"
+            type="error"
+            transition="fade-transition"
+            v-model="alertVisible"
+            >
+                {{ errorMessage }}
+            </v-alert>
+
             <v-card-title class="d-flex flex-column justify-space-between align-center mt-3 mb-3">
                 Register User
             </v-card-title>
@@ -143,6 +151,7 @@
                 <v-row>
                     <v-col cols="6">
                         <v-text-field
+                            :rules="[rules.required]"
                             name="username"
                             label="username"
                             id="username"
@@ -157,7 +166,7 @@
                             name="password"
                             label="password"
                             id="password"
-                            hint="At least 8 characters"
+                            hint="At least 4 characters"
                             counter
                             v-model="postdata.password"
                             @click:append="show1 = !show1"
@@ -165,6 +174,7 @@
                     </v-col>
                     <v-col cols="12">
                         <v-text-field
+                            :rules="[rules.required]"
                             name="firstname"
                             label="firstname"
                             id="firstname"
@@ -173,6 +183,7 @@
                     </v-col>
                     <v-col cols="12">
                         <v-text-field
+                            :rules="[rules.required]"
                             name="surname"
                             label="surname"
                             id="surname"
@@ -214,14 +225,48 @@
         </v-card>
     </v-dialog>
 
-    <!-- <v-alert
-    v-if="error"
-    type="error"
-    
-    v-model="alertVisible"
-    >
-        {{ errorMessage }}
-    </v-alert> -->
+    <v-dialog
+        v-model="dialogForgetPassword"
+        max-width="500px"
+        transition="dialog-transition">
+        <v-card>
+            <v-card-title primary-title>
+                Change Password
+            </v-card-title>
+            <v-card-text>
+                <v-row>
+                    <v-col cols="12"> 
+                        <v-text-field
+                            :rules="[rules.required]"
+                            name="username"
+                            label="username"
+                            id="username"
+                            v-model="passwordData.username"
+                        ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                        <v-text-field
+                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                            :rules="[rules.required, rules.min]"
+                            :type="show1 ? 'text' : 'password'"
+                            name="new_password"
+                            label="new_password"
+                            id="new_password"
+                            hint="At least 4 characters"
+                            counter
+                            v-model="passwordData.password"
+                            @click:append="show1 = !show1"
+                        ></v-text-field>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+            <v-card-actions>
+                <v-btn text color="error" @click="closeItem()"> cancel </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn text color="success"> sumbit </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 
     <v-main>
         <router-view/>
@@ -251,6 +296,10 @@ export default {
                 gender: '',
                 role: ''
             },
+            passwordData: {
+                username: '',
+                password: '',
+            },
             user_id: 0,
             order: [],
             items: ['admin', 'user'],
@@ -259,9 +308,10 @@ export default {
             dialogLogin: false,
             dialogRegister: false,
             showPassword: false,
+            dialogForgetPassword: false,
             rules: {
                 required: value => !!value || 'Required.',
-                min: v => v.length >= 2 || 'Min 8 characters',
+                min: v => v.length >= 4 || 'Min 4 characters',
                 emailMatch: () => (`The email and password you entered don't match`),
             },
             error: false,
@@ -280,6 +330,8 @@ export default {
             this.id = ''
             this.dialogLogin = false
             this.dialogRegister = false
+            this.error = false
+            this.dialogForgetPassword = false
         },
         editLogin() {
             this.dialogLogin = true
@@ -299,7 +351,6 @@ export default {
                     this.user_id = this.$cookies.get("userID")
                     alert(res.data.message)
                     this.closeItem()
-                    // location.reload()
                 })
             }catch (err) {
                 this.error = true
@@ -309,12 +360,13 @@ export default {
         },
         async registerUser() {
             try {
-                const {data} = await this.axios.post('http://localhost:3000/users/register', this.postdata)
-                console.log(data)
+                await this.axios.post('http://localhost:3000/users/register', this.postdata)
                 alert('register complete')
                 this.closeItem()
             }catch (err) {
-                alert(err)
+                this.error = true
+                this.errorMessage = err.response.data || "An unexpected error occurred."
+                console.log(err.response.data)
             }
         },
         logout(route) {
