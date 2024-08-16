@@ -90,129 +90,138 @@
     </v-card>
 
     <v-dialog
-        v-model="dialogLogin"
-        max-width="500px">
-            <v-card>
-                <v-card-title class="d-flex flex-column justify-space-between align-center mt-3 mb-3">
-                    Login User
-                </v-card-title>
-                <v-card-text>
-                    <v-row>
-                        <v-col cols="12">
-                            <v-text-field
-                                name="username"
-                                label="username"
-                                id="username"
-                                v-model="postdata.username">
-                            </v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                            <v-text-field
-                                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                                :rules="[rules.required, rules.min]"
-                                :type="show1 ? 'text' : 'password'"
-                                name="password"
-                                label="password"
-                                id="password"
-                                hint="At least 8 characters"
-                                counter
-                                v-model="postdata.password"
-                                @click:append="show1 = !show1"
-                                >
-                            </v-text-field>                          
-                        </v-col>
-                    </v-row>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="error" text @click="closeItem()"> cancel </v-btn>
-                    <v-btn color="success" text @click="loginUser()"> login </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
+    v-model="dialogLogin"
+    max-width="500px">
+        <v-card>
+            <v-card-title class="d-flex flex-column justify-space-between align-center mt-3 mb-3">
+                Login User
+            </v-card-title>
+            <v-card-text>
+                <v-row>
+                    <v-col cols="12">
+                        <v-text-field
+                            name="username"
+                            label="username"
+                            id="username"
+                            v-model="postdata.username">
+                        </v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                        <v-text-field
+                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                            :rules="[rules.required, rules.min]"
+                            :type="show1 ? 'text' : 'password'"
+                            name="password"
+                            label="password"
+                            id="password"
+                            hint="At least 8 characters"
+                            counter
+                            v-model="postdata.password"
+                            @click:append="show1 = !show1"
+                            >
+                        </v-text-field>
+                        <p v-if="error" style="color:red"> {{ errorMessage }} </p>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="error" text @click="closeItem()"> cancel </v-btn>
+                <v-btn color="success" text @click="loginUser()"> login </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 
-        <v-dialog
-        v-model="dialogRegister"
-        max-width="500px">
-            <v-card>
-                <v-card-title class="d-flex flex-column justify-space-between align-center mt-3 mb-3">
-                    Register User
-                </v-card-title>
-                <v-card-text>
-                    <v-row>
-                        <v-col cols="6">
-                            <v-text-field
-                                name="username"
-                                label="username"
-                                id="username"
-                                v-model="postdata.username"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="6">
-                            <v-text-field
-                                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                                :rules="[rules.required, rules.min]"
-                                :type="show1 ? 'text' : 'password'"
-                                name="password"
-                                label="password"
-                                id="password"
-                                hint="At least 8 characters"
-                                counter
-                                v-model="postdata.password"
-                                @click:append="show1 = !show1"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                            <v-text-field
-                                name="firstname"
-                                label="firstname"
-                                id="firstname"
-                                v-model="postdata.firstname"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                            <v-text-field
-                                name="surname"
-                                label="surname"
-                                id="surname"
-                                v-model="postdata.surname"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="4">
-                            <v-text-field
-                                name="age"
-                                label="age"
-                                id="age"
-                                v-model="postdata.age"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="4">
-                            <v-text-field
-                                name="gender"
-                                label="gender"
-                                id="gender"
-                                v-model="postdata.gender"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="4">
-                            <v-autocomplete
-                                v-model="postdata.role"
-                                :items="items"
-                                dense
-                                filled
-                                label="roles"
-                            ></v-autocomplete>
-                        </v-col>
-                    </v-row>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn color="error" text @click="closeItem()"> cancel</v-btn>
-                    <v-btn color="success" text @click="registerUser()"> submit </v-btn>
-                    <!-- <v-btn color="" text @click="deleteData()"> delete </v-btn> -->
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
+    <v-dialog
+    v-model="dialogRegister"
+    max-width="500px">
+        <v-card>
+            <v-card-title class="d-flex flex-column justify-space-between align-center mt-3 mb-3">
+                Register User
+            </v-card-title>
+            <v-card-text>
+                <v-row>
+                    <v-col cols="6">
+                        <v-text-field
+                            name="username"
+                            label="username"
+                            id="username"
+                            v-model="postdata.username"
+                        ></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field
+                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                            :rules="[rules.required, rules.min]"
+                            :type="show1 ? 'text' : 'password'"
+                            name="password"
+                            label="password"
+                            id="password"
+                            hint="At least 8 characters"
+                            counter
+                            v-model="postdata.password"
+                            @click:append="show1 = !show1"
+                        ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                        <v-text-field
+                            name="firstname"
+                            label="firstname"
+                            id="firstname"
+                            v-model="postdata.firstname"
+                        ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                        <v-text-field
+                            name="surname"
+                            label="surname"
+                            id="surname"
+                            v-model="postdata.surname"
+                        ></v-text-field>
+                    </v-col>
+                    <v-col cols="4">
+                        <v-text-field
+                            name="age"
+                            label="age"
+                            id="age"
+                            v-model="postdata.age"
+                        ></v-text-field>
+                    </v-col>
+                    <v-col cols="4">
+                        <v-text-field
+                            name="gender"
+                            label="gender"
+                            id="gender"
+                            v-model="postdata.gender"
+                        ></v-text-field>
+                    </v-col>
+                    <v-col cols="4">
+                        <v-autocomplete
+                            v-model="postdata.role"
+                            :items="items"
+                            dense
+                            filled
+                            label="roles"
+                        ></v-autocomplete>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="error" text @click="closeItem()"> cancel</v-btn>
+                <v-btn color="success" text @click="registerUser()"> submit </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
+
+    <!-- <v-alert
+    v-if="error"
+    type="error"
+    
+    v-model="alertVisible"
+    >
+        {{ errorMessage }}
+    </v-alert> -->
 
     <v-main>
         <router-view/>
@@ -255,6 +264,9 @@ export default {
                 min: v => v.length >= 2 || 'Min 8 characters',
                 emailMatch: () => (`The email and password you entered don't match`),
             },
+            error: false,
+            errorMessage: '',
+            alertVisible: true,
             headerToken: '',
         } 
     },
@@ -280,9 +292,9 @@ export default {
                 await this.axios.post('http://localhost:3000/users/login', this.postdata)
                 .then((res) => {
                     localStorage.setItem("username", this.postdata.username)
-                    this.$cookies.set("userID", res.data.data._id, "6000s")
-                    this.$cookies.set("token", res.data.token, "6000s")
-                    this.$cookies.set("role", res.data.role, "6000s")
+                    this.$cookies.set("userID", res.data.data._id, "3600s")
+                    this.$cookies.set("token", res.data.token, "3600s")
+                    this.$cookies.set("role", res.data.data.role, "3600s")
                     this.headerToken = this.$cookies.get("token")
                     this.user_id = this.$cookies.get("userID")
                     alert(res.data.message)
@@ -290,8 +302,9 @@ export default {
                     // location.reload()
                 })
             }catch (err) {
-                console.log(err)
-                alert(err)
+                this.error = true
+                this.errorMessage = err.response.data || "An unexpected error occurred."
+                console.log(err.response.data)
             }
         },
         async registerUser() {
