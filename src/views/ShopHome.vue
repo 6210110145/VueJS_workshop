@@ -23,48 +23,55 @@
         </v-toolbar>
     </v-card>
 
-    <div class="d-flex flex-column justify-space-between align-center mt-3 mb-3">
-        <h1> 
-            สินค้าทั้งหมด
-            <v-btn v-if="role == 'admin'" color="success" @click="newProduct()">Add Product</v-btn>  
-        </h1>
-        <p class="align-center mt-3 mb-3"> จำนวน {{product.length}} สินค้า</p>
-    </div>
+    <div v-if="!error">
+        <div class="d-flex flex-column justify-space-between align-center mt-3 mb-3">
+            <h1> 
+                สินค้าทั้งหมด
+                <v-btn v-if="role == 'admin'" color="success" @click="newProduct()">Add Product</v-btn>  
+            </h1>
+            <p class="align-center mt-3 mb-3"> จำนวน {{product.length}} สินค้า</p>
+        </div>
 
-    <v-row>
-        <v-col col="3" v-for="(item, index) in product" :key="index">
-            <v-card
-            width="350"
-            class="ml-8"
-            @click.once="navigaToShop('/product/' + item.id)">
-                <v-img 
-                :src="item.linkimage"
+        <v-row>
+            <v-col col="3" v-for="(item, index) in product" :key="index">
+                <v-card
                 width="350"
-                height="300">
-                </v-img>
-                <v-card-title primary-title> 
-                    {{item.price}} ฿
-                </v-card-title>
-                <v-card-title> 
-                    {{item.product_name}}
-                </v-card-title>
-                <v-card-subtitle>
-                    {{item.detail.color}} {{item.detail.type}} for {{item.detail.gender}}
-                </v-card-subtitle>
-                <v-card-text>
-                    มีจำนวน: {{item.amount}}
-                </v-card-text>
-                    <v-card-actions>
-                        <v-btn text color="success" @click.once="navigaToShop('/product/' + item.id)"> detail </v-btn>
-                        <v-btn text color="info" @click.once="addCart(item)"> add cart </v-btn>
-                        <div v-if="role == 'admin'">
-                            <v-btn text color="success" @click="editItem(item)"> edit </v-btn>
-                            <v-btn text color="error" @click="deleteItem(item)"> delete </v-btn>
-                        </div>
-                    </v-card-actions>
-            </v-card>
-        </v-col>
-    </v-row>
+                class="ml-8"
+                @click.once="navigaToShop('/product/' + item.id)">
+                    <v-img 
+                    :src="item.linkimage"
+                    width="350"
+                    height="300">
+                    </v-img>
+                    <v-card-title primary-title> 
+                        {{item.price}} ฿
+                    </v-card-title>
+                    <v-card-title> 
+                        {{item.product_name}}
+                    </v-card-title>
+                    <v-card-subtitle>
+                        {{item.detail.color}} {{item.detail.type}} for {{item.detail.gender}}
+                    </v-card-subtitle>
+                    <v-card-text>
+                        มีจำนวน: {{item.amount}}
+                    </v-card-text>
+                        <v-card-actions>
+                            <v-btn text color="success" @click.once="navigaToShop('/product/' + item.id)"> detail </v-btn>
+                            <v-btn text color="info" @click.once="addCart(item)"> add cart </v-btn>
+                            <div v-if="role == 'admin'">
+                                <v-btn text color="success" @click="editItem(item)"> edit </v-btn>
+                                <v-btn text color="error" @click="deleteItem(item)"> delete </v-btn>
+                            </div>
+                        </v-card-actions>
+                </v-card>
+            </v-col>
+        </v-row>
+    </div>
+    <div v-else class="d-flex flex-column justify-space-between align-center">
+        <h1 class="mt-3 mb-3"> 
+            No Result
+        </h1>
+    </div>
 
     <v-dialog
     v-model="dialogedit"
@@ -212,6 +219,7 @@ export default {
                 },
             },
             role: '',
+            error: false,
         }
     },
     created() {
@@ -376,6 +384,7 @@ export default {
                         product_img: products.image.name,
                     }));
                 }else {
+                    this.error = false
                     this.product_response = await this.axios.get("http://localhost:3000/products/");
                     this.product = this.product_response.data.data.map((products) => ({
                         id: products._id,
@@ -389,6 +398,8 @@ export default {
                     }));
                 }                             
             }catch (err) {
+                this.error = true
+                this.product = ""
                 alert(err)
             }
         }
