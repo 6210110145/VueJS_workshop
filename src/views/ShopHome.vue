@@ -1,5 +1,28 @@
 <template>
   <div>
+    <v-card
+    color="grey lighten-4"
+    height="30px"
+    flat
+    tile>
+        <v-toolbar
+        height="50px"
+        dense>  
+            <v-text-field
+            class="mt-1"
+            label="Search"
+            filled
+            dense
+            hide-details
+            prepend-inner-icon="mdi-magnify"
+            solo-inverted
+            clearable
+            @keydown.enter.prevent="searchProduct"
+            v-model="productName" >
+            </v-text-field>
+        </v-toolbar>
+    </v-card>
+
     <div class="d-flex flex-column justify-space-between align-center mt-3 mb-3">
         <h1> 
             สินค้าทั้งหมด
@@ -333,6 +356,38 @@ export default {
                     this.closeItem()
                     this.getData()
                 })
+            }catch (err) {
+                alert(err)
+            }
+        },
+        async searchProduct() {
+            console.log(this.productName)
+            try{
+                if(this.productName) {
+                    this.product_response = await this.axios.get('http://localhost:3000/products/search?search='+this.productName)
+                    this.product = this.product_response.data.data.map((products) => ({
+                        id: products._id,
+                        product_code: products.code,
+                        product_name: products.name,
+                        price: products.price,
+                        amount: products.amount,
+                        detail: products.detail,
+                        linkimage: `http://localhost:3000/${products.image.url}`,
+                        product_img: products.image.name,
+                    }));
+                }else {
+                    this.product_response = await this.axios.get("http://localhost:3000/products/");
+                    this.product = this.product_response.data.data.map((products) => ({
+                        id: products._id,
+                        product_code: products.code,
+                        product_name: products.name,
+                        price: products.price,
+                        amount: products.amount,
+                        detail: products.detail,
+                        linkimage: `http://localhost:3000/${products.image.url}`,
+                        product_img: products.image.name,
+                    }));
+                }                             
             }catch (err) {
                 alert(err)
             }

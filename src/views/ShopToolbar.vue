@@ -21,15 +21,6 @@
             
             <!-- <v-spacer></v-spacer> -->
 
-            <v-text-field
-            class="mx-8"
-            flat
-            hide-details
-            label="Search"
-            prepend-inner-icon="mdi-magnify"
-            solo-inverted >
-            </v-text-field>
-
             <v-btn icon>
               <v-icon>mdi-account</v-icon>
             </v-btn>
