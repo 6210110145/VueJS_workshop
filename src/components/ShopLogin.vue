@@ -74,8 +74,8 @@
                                 label="new_password"
                                 id="new_password"
                                 hint="At least 4 characters"
-                                counter
                                 v-model="passwordData.password"
+                                counter                   
                                 @click:append="show1 = !show1"
                             ></v-text-field>
                         </v-col>
@@ -84,7 +84,7 @@
                 <v-card-actions>
                     <v-btn text color="error" @click="closeItem()"> cancel </v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn text color="success"> sumbit </v-btn>
+                    <v-btn text color="success" @click="forgetPassword()"> sumbit </v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -131,6 +131,19 @@ export default {
                     this.closeItem()
                 })
             }catch (err) {
+                console.log(err)
+                alert(err)
+            }
+        },
+        async forgetPassword() {
+            try {
+                await this.axios.post("http://localhost:3000/users/password", this.passwordData)
+                .then((res) => {
+                    alert(res.data.message)
+                    window.location.reload()
+                    this.closeItem()
+                })
+            }catch (err){
                 console.log(err)
                 alert(err)
             }

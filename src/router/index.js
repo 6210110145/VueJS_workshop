@@ -16,27 +16,6 @@ const routes = [
     component: () => import('../views/ShopToolbar.vue'),
     children: [
       {
-        path: '/about',
-        name: 'about',
-        component: () => import('../views/AboutView.vue')
-      },
-      
-      {
-        path: '/simple',
-        name: 'simple',
-        component: () => import('../views/Simple.vue')
-      },
-      {
-        path: '/grade',
-        name: 'grade',
-        component: () => import('../views/Grade.vue')
-      },
-      {
-        path: '/api',
-        name: 'api',
-        component: () => import('../views/Apicon.vue')
-      },
-      {
         path: '/shop',
         name: 'shop',
         component: () => import('../views/ShopHome.vue')
@@ -62,6 +41,26 @@ const routes = [
     path: '/me',
     name: 'me',
     component: () => import('../views/Me.vue')
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: () => import('../views/AboutView.vue')
+  },
+  {
+    path: '/simple',
+    name: 'simple',
+    component: () => import('../views/Simple.vue')
+  },
+  {
+    path: '/grade',
+    name: 'grade',
+    component: () => import('../views/Grade.vue')
+  },
+  {
+    path: '/api',
+    name: 'api',
+    component: () => import('../views/Apicon.vue')
   },
 ]
 
