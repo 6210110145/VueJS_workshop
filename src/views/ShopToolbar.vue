@@ -24,9 +24,9 @@
             <v-btn icon>
               <v-icon>mdi-account</v-icon>
             </v-btn>
-            <div v-if="!headerToken">
-                <v-btn text @click="editLogin()">login</v-btn>
-                <v-btn text @click="editRegister()">register</v-btn>
+            <div v-if="!this.$cookies.get('token')">
+                <v-btn text @click="loginComponent = true">login</v-btn>
+                <v-btn text @click="dialogRegister = true">register</v-btn>
             </div>
             <div v-else>
                 <v-btn text @click.once="navigateToProfile('/profile/'+user_id)"> profile </v-btn>
@@ -69,58 +69,13 @@
                             <v-btn  text color="error" @click.once="logout('/')"> logout </v-btn>
                         </v-list-item-title>
                         <v-list-item-title v-else>
-                            <v-btn  text color="success" @click="editLogin()"> login </v-btn>
+                            <v-btn  text color="success" @click="loginComponent = true"> login </v-btn>
                         </v-list-item-title>
                     </v-list-item>
                 </v-list>
             </v-menu>
         </v-toolbar>
     </v-card>
-
-    <v-dialog
-    v-model="dialogLogin"
-    max-width="500px">
-        <v-card>
-            <v-card-title class="d-flex flex-column justify-space-between align-center mt-3 mb-3">
-                Login User
-            </v-card-title>
-            <v-card-text>
-                <v-row>
-                    <v-col cols="12">
-                        <v-text-field
-                            name="username"
-                            label="username"
-                            id="username"
-                            :rules="[rules.required]"
-                            v-model="postdata.username">
-                        </v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                        <v-text-field
-                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                            :rules="[rules.required, rules.min]"
-                            :type="show1 ? 'text' : 'password'"
-                            name="password"
-                            label="password"
-                            id="password"
-                            hint="At least 8 characters"
-                            counter
-                            v-model="postdata.password"
-                            @click:append="show1 = !show1"
-                            >
-                        </v-text-field>
-                        <p v-if="error" style="color:red"> {{ errorMessage }} </p>
-                    </v-col>
-                </v-row>
-            </v-card-text>
-            <v-card-actions>
-                <v-btn text color="primary" @click="dialogForgetPassword = true"> forgetpassword? </v-btn>
-                <v-spacer></v-spacer>
-                <v-btn color="error" text @click="closeItem()"> cancel </v-btn>
-                <v-btn color="success" text @click="loginUser()"> login </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
 
     <v-dialog
     v-model="dialogRegister"
@@ -216,48 +171,9 @@
         </v-card>
     </v-dialog>
 
-    <v-dialog
-        v-model="dialogForgetPassword"
-        max-width="500px"
-        transition="dialog-transition">
-        <v-card>
-            <v-card-title primary-title>
-                Change Password
-            </v-card-title>
-            <v-card-text>
-                <v-row>
-                    <v-col cols="12"> 
-                        <v-text-field
-                            :rules="[rules.required]"
-                            name="username"
-                            label="username"
-                            id="username"
-                            v-model="passwordData.username"
-                        ></v-text-field>
-                    </v-col>
-                    <v-col cols="12">
-                        <v-text-field
-                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                            :rules="[rules.required, rules.min]"
-                            :type="show1 ? 'text' : 'password'"
-                            name="new_password"
-                            label="new_password"
-                            id="new_password"
-                            hint="At least 4 characters"
-                            counter
-                            v-model="passwordData.password"
-                            @click:append="show1 = !show1"
-                        ></v-text-field>
-                    </v-col>
-                </v-row>
-            </v-card-text>
-            <v-card-actions>
-                <v-btn text color="error" @click="closeItem()"> cancel </v-btn>
-                <v-spacer></v-spacer>
-                <v-btn text color="success"> sumbit </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+    <div v-if="loginComponent">
+        <shop-login-vue />
+    </div>
 
     <v-main>
         <router-view/>
@@ -266,7 +182,12 @@
 </template>
 
 <script>
+import ShopLoginVue from '@/components/ShopLogin.vue'
+
 export default {
+    components: {
+        ShopLoginVue
+    },
     data() {
         return {
             postdata: { // ชุดไว้ส่งข้อมูล
@@ -291,13 +212,14 @@ export default {
                 username: '',
                 password: '',
             },
-            user_id: 0,
+            user_id: '',
             order: [],
             items: ['admin', 'user'],
             menu: ['logout'],
             show1: false,
             dialogLogin: false,
             dialogRegister: false,
+            loginComponent: false,
             showPassword: false,
             dialogForgetPassword: false,
             rules: {
@@ -308,7 +230,7 @@ export default {
             error: false,
             errorMessage: '',
             alertVisible: true,
-            headerToken: '',
+            headerToken: '',      
         } 
     },
     created() {
@@ -323,31 +245,6 @@ export default {
             this.dialogRegister = false
             this.error = false
             this.dialogForgetPassword = false
-        },
-        editLogin() {
-            this.dialogLogin = true
-        },
-        editRegister() {
-            this.dialogRegister = true
-        },
-        async loginUser() {
-            try {
-                await this.axios.post('http://localhost:3000/users/login', this.postdata)
-                .then((res) => {
-                    localStorage.setItem("username", this.postdata.username)
-                    this.$cookies.set("userID", res.data.data._id, "3600s")
-                    this.$cookies.set("token", res.data.token, "3600s")
-                    this.$cookies.set("role", res.data.data.role, "3600s")
-                    this.headerToken = this.$cookies.get("token")
-                    this.user_id = this.$cookies.get("userID")
-                    alert(res.data.message)
-                    this.closeItem()
-                })
-            }catch (err) {
-                this.error = true
-                this.errorMessage = err.response.data || "An unexpected error occurred."
-                console.log(err.response.data)
-            }
         },
         async registerUser() {
             try {
@@ -365,7 +262,7 @@ export default {
             this.$cookies.remove("role")
             this.$cookies.remove("userID")
             localStorage.removeItem("username")
-            this.headerToken = this.$cookies.get("token")
+            // this.headerToken = this.$cookies.get("token")
             this.$router.push(route)
             location.reload()
         },

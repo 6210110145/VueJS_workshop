@@ -14,6 +14,7 @@
                                 name="username"
                                 label="username"
                                 id="username"
+                                :rules="[rules.required]"
                                 v-model="postdata.username">
                             </v-text-field>
                         </v-col>
@@ -25,19 +26,65 @@
                                 name="password"
                                 label="password"
                                 id="password"
-                                hint="At least 8 characters"
+                                hint="At least 4 characters"
                                 counter
                                 v-model="postdata.password"
                                 @click:append="show1 = !show1"
+                                @keydown.enter.prevent="loginUser"
                                 >
-                            </v-text-field>                          
+                            </v-text-field>
+                            <p v-if="error" style="color:red"> {{ errorMessage }} </p>                         
                         </v-col>
                     </v-row>
                 </v-card-text>
                 <v-card-actions>
+                    <v-btn text color="primary" @click="dialogForgetPassword = true"> forgetpassword? </v-btn>
                     <v-spacer></v-spacer>
                     <v-btn color="error" text @click="closeItem()"> cancel </v-btn>
                     <v-btn color="success" text @click="loginUser()"> login </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog
+        v-model="dialogForgetPassword"
+        max-width="500px"
+        transition="dialog-transition">
+            <v-card>
+                <v-card-title primary-title>
+                    Change Password
+                </v-card-title>
+                <v-card-text>
+                    <v-row>
+                        <v-col cols="12"> 
+                            <v-text-field
+                                :rules="[rules.required]"
+                                name="username"
+                                label="username"
+                                id="username"
+                                v-model="passwordData.username"
+                            ></v-text-field>
+                        </v-col>
+                        <v-col cols="12">
+                            <v-text-field
+                                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                                :rules="[rules.required, rules.min]"
+                                :type="show1 ? 'text' : 'password'"
+                                name="new_password"
+                                label="new_password"
+                                id="new_password"
+                                hint="At least 4 characters"
+                                counter
+                                v-model="passwordData.password"
+                                @click:append="show1 = !show1"
+                            ></v-text-field>
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn text color="error" @click="closeItem()"> cancel </v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn text color="success"> sumbit </v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -46,35 +93,41 @@
 
 <script>
 export default {
+    // props: {
+    //     dialogLogin: Boolean
+    // },
     data() {
         return {
-            postdata: { // ชุดไว้ส่งข้อมูล
+            postdata: {
                 username: '',
                 password: '',
-                firstname: '',
-                surname: '',
-                age: 20,
-                gender: '',
-                role: ''
+            },
+            passwordData: {
+                username: '',
+                password: '',
             },
             dialogLogin: true,
             show1: false,
             rules: {
                 required: value => !!value || 'Required.',
-                min: v => v.length >= 2 || 'Min 8 characters',
-                emailMatch: () => (`The email and password you entered don't match`),
+                min: v => v.length >= 4 || 'Min 4 characters',
             },
+            error: false,
+            errorMessage: '',
+            dialogForgetPassword: false,
         }
     },
     methods: {
         async loginUser() {
             try {
-                await this.axios.post('http://localhost:3000/users/login', this.postdata, {
-                }).then((res) => {
-                    console.log(res.data.message)
-                    localStorage.setItem("token", res.data.token)
-                    localStorage.setItem("username", res.data.name)
+                await this.axios.post('http://localhost:3000/users/login', this.postdata)
+                .then((res) => {
+                    localStorage.setItem("username", this.postdata.username)
+                    this.$cookies.set("userID", res.data.data._id, "3600s")
+                    this.$cookies.set("token", res.data.token, "3600s")
+                    this.$cookies.set("role", res.data.data.role, "3600s")
                     alert(res.data.message)
+                    window.location.reload()
                     this.closeItem()
                 })
             }catch (err) {
@@ -85,6 +138,9 @@ export default {
         closeItem() {
             this.id = ''
             this.dialogLogin = false
+            this.error = false
+            this.dialogForgetPassword = false
+            this.$emit('closeComponent')
         },
     }
 }

@@ -37,11 +37,12 @@
                 <v-card
                 width="350"
                 class="ml-8"
-                @click.once="navigaToShop('/product/' + item.id)">
+                >
                     <v-img 
                     :src="item.linkimage"
                     width="350"
-                    height="300">
+                    height="300"
+                    @click.once="navigaToShop('/product/' + item.id)">
                     </v-img>
                     <v-card-title primary-title> 
                         {{item.price}} ฿
@@ -173,15 +174,19 @@
             </v-card-actions>
         </v-card>
     </v-dialog>
+
+    <div v-if="loginComponent">
+        <shop-login-vue @closeComponent="closeItem()" />
+    </div>
   </div>
 </template>
 
 <script>
-// import ShopLoginVue from '@/components/ShopLogin.vue'
+import ShopLoginVue from '@/components/ShopLogin.vue'
 
 export default {
     components: {
-    //   ShopLoginVue
+      ShopLoginVue
     },
     data() {
         return {
@@ -190,8 +195,8 @@ export default {
             dialogdelete: false,
             product: [],
             product_response: [],
+            productName: '',
             order: [],
-            Login: false,
             postdata: { // ชุดไว้ส่งข้อมูล
                 product_code: '',
                 product_name: '',
@@ -220,14 +225,17 @@ export default {
             },
             role: '',
             error: false,
+            loginComponent: false,
         }
     },
     created() {
-      this.getData()
-      this.role = this.$cookies.get("role")
-
-      let product_id = localStorage.getItem("order")
-      this.order = product_id.split(',');
+        this.getData()
+        this.role = this.$cookies.get("role")
+        
+        if(localStorage.getItem("order")) {
+            let product_id = localStorage.getItem("order")
+            this.order = product_id.split(',');
+        }
     },
     computed: {
         savemode() {
@@ -248,25 +256,22 @@ export default {
                     linkimage: `http://localhost:3000/${products.image.url}`,
                     product_img: products.image.name,
                 }));
-                // console.log(this.product)
             } catch (error) {
                 console.error("Error fetching products:", error);
             }
         },
         navigaToShop(route) {
             if(!this.$cookies.get("token")) {
-                alert("Please login")
+                this.loginComponent = true
             }else {
                 this.$router.push(route)
             }  
         },
         addCart(item) {
             if(!this.$cookies.get("token")) {
-                alert("Please login")
+                this.loginComponent = true
             }else {
-                // console.log(item.id)
                 this.order.push(item.id);
-                // console.log(this.order)
                 localStorage.setItem("order", this.order)
             }
         },
@@ -280,6 +285,8 @@ export default {
             this.postdata = {...this.postdefault}
             this.dialogedit = false
             this.dialogdelete = false
+            this.loginComponent = false
+            window.location.reload()
         },
         editItem(item) {
             this.id = item.id
@@ -369,7 +376,6 @@ export default {
             }
         },
         async searchProduct() {
-            console.log(this.productName)
             try{
                 if(this.productName) {
                     this.product_response = await this.axios.get('http://localhost:3000/products/search?search='+this.productName)

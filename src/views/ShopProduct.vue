@@ -129,7 +129,7 @@ export default {
             this.productImage = this.product.product_img.map((item) => ({
                 linkimage: `http://localhost:3000/${item.url}`,
                 name: item.name,
-                id: item._id,
+                _id: item._id,
             }))
         },
         addCart(item) {
@@ -142,8 +142,6 @@ export default {
             this.selectImage = item
         },
         async deleteImage(item) {
-            console.log(item)
-            console.log(this.product._id)
             try {
                 await this.axios.put('http://localhost:3000/products/image/'+this.product._id, item, {
                     headers: {
@@ -152,7 +150,7 @@ export default {
                 }).then((response) => {
                     alert(response.data.message)
                     this.getProduct()
-                    location.reload()
+                    window.location.reload()
                 })
             }catch (err) {
                 alert(err)
@@ -161,7 +159,7 @@ export default {
         async addImage() {
             if(this.newImage) {
                 const formData = new FormData()
-                formData.append('username', this.username)
+                // formData.append('username', this.username)
                 formData.append('product_img', this.newImage)
 
                 try {

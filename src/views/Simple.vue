@@ -71,7 +71,7 @@ export default {
     },
     methods: {
         displayAlert() {
-            alert("Hello")
+            ("Hello")
         },
         setToken(item) {
             localStorage.setItem("Token", item);
