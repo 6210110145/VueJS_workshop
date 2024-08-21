@@ -177,7 +177,7 @@ export default {
                     this.profile = res.data.data
                 })
             }catch(err) {
-                alert(err)
+                alert(err.response.data.message)
             }
         },
         editProfile() {
@@ -192,7 +192,7 @@ export default {
                     alert(res.data.message)
                 })
             }catch (err) {
-                alert(err)
+                alert(err.response.data.message)
             }
         }
     }

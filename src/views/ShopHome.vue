@@ -331,7 +331,7 @@ export default {
                })
             }catch (err) {
                 console.log(err)
-                alert(err)
+                alert(err.response.data.message)
             }
         },
         async savePutData() {
@@ -357,7 +357,7 @@ export default {
                 this.closeItem()
             }catch (err) {
                 console.log(err)
-                alert(err)
+                alert(err.response.data.message)
             }
         },
         async deleteData() {
@@ -372,7 +372,7 @@ export default {
                     this.getData()
                 })
             }catch (err) {
-                alert(err)
+                alert(err.response.data.message)
             }
         },
         async searchProduct() {
@@ -406,7 +406,7 @@ export default {
             }catch (err) {
                 this.error = true
                 this.product = ""
-                alert(err)
+                alert(err.response.data.message)
             }
         }
     }

@@ -152,7 +152,7 @@ export default {
                 this.order = []
                 localStorage.removeItem('order')
             }catch (err) {
-                alert(err)
+                alert(err.response.data.message)
             }
         },
         total() {
