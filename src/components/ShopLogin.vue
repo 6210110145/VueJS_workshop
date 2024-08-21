@@ -62,7 +62,7 @@
                                 name="email"
                                 label="email"
                                 id="email"
-                                v-model="checkEmail"
+                                v-model="checkEmail.email"
                             ></v-text-field>
                         </v-col>
                     </v-row>
@@ -78,20 +78,29 @@
         <v-dialog
             v-model="dialogOtp"
             max-width="500px"
+            transition="dialog-transition"
         >
-            <div class="ma-auto position-relative">
-                <v-otp-input
-                    v-model="otp"
-                    :disabled="loading"
-                    @finish="checkOTP"
-                ></v-otp-input>
-                <v-overlay absolute :value="loading">
-                    <v-progress-circular
-                    indeterminate
-                    color="primary"
-                    ></v-progress-circular>
-                </v-overlay>
-            </div>
+            <v-card>
+                <v-card-title primary-title>
+                    OTP
+                </v-card-title>
+                <v-card-text>
+                    <div class="ma-auto position-relative">
+                        <v-otp-input
+                            v-model="otp.otp"
+                            :disabled="loading"
+                            @finish="checkOTP"
+                        ></v-otp-input>
+                        <v-overlay absolute :value="loading">
+                            <v-progress-circular
+                            indeterminate
+                            color="primary"
+                            ></v-progress-circular>
+                        </v-overlay>
+                    </div>
+                </v-card-text>
+            </v-card>
+            
             <v-snackbar
                 v-model="snackbar"
                 :color="snackbarColor"
@@ -102,7 +111,7 @@
         </v-dialog>
 
         <v-dialog
-            v-model="dialogForgetPassword"
+            v-model="dialogChangePassword"
             max-width="500px"
             transition="dialog-transition"
         >
@@ -122,7 +131,7 @@
                                 id="password"
                                 hint="At least 4 characters"
                                 counter
-                                v-model="postdata.password"
+                                v-model="passwordData.password"
                                 @click:append="show1 = !show1"
                                 @keydown.enter.prevent="loginUser"
                                 >
@@ -132,10 +141,9 @@
                     </v-row>
                 </v-card-text>
                 <v-card-actions>
-                    <v-btn text color="primary" @click="dialogEmail = true"> forgetpassword? </v-btn>
                     <v-spacer></v-spacer>
                     <v-btn color="error" text @click="closeItem()"> cancel </v-btn>
-                    <v-btn color="success" text @click="loginUser()"> login </v-btn>
+                    <v-btn color="success" text @click="changePassword()"> confirm </v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -153,20 +161,23 @@ export default {
                 username: '',
                 password: '',
             },
-            checkEmail: '',
+            checkEmail: {
+                email: '',
+            },
             passwordData: {
-                username: '',
                 password: '',
             },
             otpdata: {},
+            otp: {
+                otp: '',
+            },
             loading: false,
             snackbar: false,
             snackbarColor: 'default',
-            otp: '',
             text: '',
             dialogLogin: true,
             dialogEmail: false,
-            dialogForgetPassword: false,
+            dialogChangePassword: false,
             dialogOtp: false,
             show1: false,
             rules: {
@@ -183,6 +194,7 @@ export default {
             try {
                 await this.axios.post('http://localhost:3000/users/login', this.postdata)
                 .then((res) => {
+                    this.error = false
                     localStorage.setItem("username", this.postdata.username)
                     this.$cookies.set("userID", res.data.data._id, "3600s")
                     this.$cookies.set("token", res.data.token, "3600s")
@@ -192,55 +204,70 @@ export default {
                     this.closeItem()
                 })
             }catch (err) {
-                console.log(err)
-                alert(err)
+                // console.log(err.response.data.message)
+                this.error = true
+                this.errorMessage = err.response.data.message
+                alert(err.response.data.message)
             }
         },
         async sendOTP() {
             try {
+                console.log(this.checkEmail)
                 await this.axios.post("http://localhost:3000/users/otp", this.checkEmail)
                 .then((res) => {
+                    this.error = false
                     this.otpdata = res.data.data
+                    this.dialogEmail = false 
                     this.dialogOtp = true
                 })
             }catch (err) {
+                alert(err.response.data.message)
                 console.log(err)
             }
         },
-        async forgetPassword() {
+        async checkOTP() {
+            this.loading = true         
+           
+            setTimeout(async () => {
+                this.loading = false 
+                try {
+                    await this.axios.post("http://localhost:3000/users/check-otp/"+this.otpdata._id, this.otp)
+                    .then((res) => {
+                        console.log(res.data.data)
+                        this.error = false
+                        this.snackbarColor = 'success'
+                        this.dialogChangePassword = true
+                        this.text = `Processed OTP with "${this.otp.otp}" (${this.snackbarColor})`
+                    });
+                }catch (err) {
+                    this.snackbarColor = 'warning'
+                    this.text = `Processed OTP with "${this.otp.otp}" (${this.snackbarColor})`
+                    this.snackbar = true
+                    alert(err.response.data.message)
+                }
+            }, 3500);          
+        },        
+        async changePassword() {
             try {
-                await this.axios.post("http://localhost:3000/users/password", this.passwordData)
+                await this.axios.put("http://localhost:3000/users/newpassword/"+this.otpdata._id, this.passwordData)
                 .then((res) => {
+                    this.error = false
                     alert(res.data.message)
                     window.location.reload()
                     this.closeItem()
                 })
             }catch (err){
                 console.log(err)
-                alert(err)
+                this.error = true
+                this.errorMessage = err.response.data.message
+                alert(err.response.data.message)
             }
-        },
-        async checkOTP (rsp) {
-            this.loading = true
-            // await this.axios.post("http://localhost:3000/users/check-otp/"+this.otpdata._id, rsp)
-            setTimeout(() => {
-                this.loading = false
-                
-                if (rsp == this.otpdata.otp) {
-                    this.snackbarColor = 'success'
-                    this.dialogForgetPassword = true
-                }else{
-                    this.snackbarColor = 'warning'
-                } 
-                this.text = `Processed OTP with "${rsp}" (${this.snackbarColor})`
-                this.snackbar = true
-            }, 3500)
         },
         closeItem() {
             this.id = ''
             this.dialogLogin = false
             this.error = false
-            this.dialogForgetPassword = false
+            this.dialogChangePassword = false
             this.$emit('closeComponent')
         },
     }
