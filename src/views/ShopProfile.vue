@@ -43,7 +43,7 @@
                 <v-card-actions>
                     <v-btn color="primary" @click="editProfileDialog = true">Edit Profile</v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn color="error" @click="passwordChangeDialog = true">change password</v-btn>
+                    <v-btn color="error" @click="changePasswordComponent = true">change password</v-btn>
                 </v-card-actions>
                 </v-card>
             </v-col>
@@ -68,20 +68,6 @@
                             v-model="profile.username"
                         ></v-text-field>
                     </v-col>
-                    <!-- <v-col cols="6">
-                        <v-text-field
-                            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                            :rules="[rules.required, rules.min]"
-                            :type="show1 ? 'text' : 'password'"
-                            name="password"
-                            label="password"
-                            id="password"
-                            hint="At least 8 characters"
-                            counter
-                            v-model="profile.password"
-                            @click:append="show1 = !show1"
-                        ></v-text-field>
-                    </v-col> -->
                     <v-col cols="12">
                         <v-text-field
                             name="firstname"
@@ -142,24 +128,30 @@
             </v-card-title>
         </v-card>
     </v-dialog>
+
+    <div v-if="changePasswordComponent">
+        <shop-change-password-vue />
+    </div>
+
   </div>
 </template>
 
 <script>
+import ShopChangePasswordVue from '@/components/ShopChangePassword.vue'
+
 export default {
+    components: {
+        ShopChangePasswordVue
+    },
     data() {
         return {
             user_id: '',
             profile: {},
             show1: false,
             roles: ['admin', 'user'],
-            // rules: {
-            //     required: value => !!value || 'Required.',
-            //     min: v => v.length >= 2 || 'Min 8 characters',
-            //     emailMatch: () => (`The email and password you entered don't match`),
-            // },
             editProfileDialog: false,
             passwordChangeDialog: false,
+            changePasswordComponent: false,
         }
     },
     created() {

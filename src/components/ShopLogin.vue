@@ -12,7 +12,7 @@
                         <v-col cols="12">
                             <v-text-field
                                 name="username"
-                                label="username"
+                                label="username or email"
                                 id="username"
                                 :rules="[rules.required]"
                                 v-model="postdata.username">

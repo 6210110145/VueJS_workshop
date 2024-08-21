@@ -103,7 +103,7 @@
                             id="username"
                             v-model="postdata.username"
                         ></v-text-field>
-                    </v-col>
+                    </v-col>                   
                     <v-col cols="6">
                         <v-text-field
                             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
@@ -116,6 +116,15 @@
                             counter
                             v-model="postdata.password"
                             @click:append="show1 = !show1"
+                        ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                        <v-text-field
+                            :rules="[rules.required]"
+                            name="email"
+                            label="email"
+                            id="email"
+                            v-model="postdata.email"
                         ></v-text-field>
                     </v-col>
                     <v-col cols="12">
@@ -192,6 +201,7 @@ export default {
         return {
             postdata: { // ชุดไว้ส่งข้อมูล
                 username: '',
+                email: '',
                 password: '',
                 firstname: '',
                 surname: '',
@@ -201,6 +211,7 @@ export default {
             },
             postdefault: { // ชุดไว้ล้างข้อมูล
                 username: '',
+                email: '',
                 password: '',
                 firstname: '',
                 surname: '',

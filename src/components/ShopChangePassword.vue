@@ -162,18 +162,19 @@ export default {
                 this.loading = false 
                 try {
                     await this.axios.post("http://localhost:3000/users/check-otp/"+this.otpdata._id, this.otp)
-                    .then((res) => {
-                        console.log(res.data.data)
+                    .then(() => {
+                        // console.log(res.data.data)
                         this.error = false
                         this.snackbarColor = 'success'
                         this.dialogChangePassword = true
                         this.text = `Processed OTP with "${this.otp.otp}" (${this.snackbarColor})`
                     });
                 }catch (err) {
+                    console.log(err)
                     this.snackbarColor = 'warning'
                     this.text = `Processed OTP with "${this.otp.otp}" (${this.snackbarColor})`
                     this.snackbar = true
-                    alert(err.response.data.message)
+                    alert(err.response.data)
                 }
             }, 3500);
         },
