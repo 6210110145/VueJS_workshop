@@ -160,7 +160,6 @@ export default {
             if(this.newImage) {
                 const formData = new FormData()
                 formData.append('product_img', this.newImage)
-
                 try {
                     await this.axios.put('http://localhost:3000/products/images/'+this.product._id, formData, {
                         headers: {

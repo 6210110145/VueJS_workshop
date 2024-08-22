@@ -38,12 +38,12 @@
                 width="350"
                 class="ml-8"
                 >
-                    <v-img 
+                <v-img 
                     :src="item.linkimage"
                     width="350"
                     height="300"
                     @click.once="navigaToShop('/product/' + item.id)">
-                    </v-img>
+                </v-img>           
                     <v-card-title primary-title> 
                         {{item.price}} ฿
                     </v-card-title>
@@ -253,8 +253,8 @@ export default {
                     price: products.price,
                     amount: products.amount,
                     detail: products.detail,
-                    linkimage: `http://localhost:3000/${products.image.url}`,
-                    product_img: products.image.name,
+                    linkimage: products.image  ? `http://localhost:3000/${products.image.url}`: null,
+                    product_img: products.image ? products.image.name : products.name,
                 }));
             } catch (error) {
                 console.error("Error fetching products:", error);

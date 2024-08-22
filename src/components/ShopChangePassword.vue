@@ -174,7 +174,12 @@ export default {
                     this.snackbarColor = 'warning'
                     this.text = `Processed OTP with "${this.otp.otp}" (${this.snackbarColor})`
                     this.snackbar = true
-                    alert(err.response.data)
+                    if(err.response.status == '429') {
+                        alert(err.response.data.message)
+                        window.location.reload()
+                    }else {
+                        alert(err.response.data.message)
+                    }
                 }
             }, 3500);
         },

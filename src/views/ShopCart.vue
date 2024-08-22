@@ -150,6 +150,7 @@ export default {
                 alert('order complete')
                 this.postdata = ''
                 this.order = []
+                this.total()
                 localStorage.removeItem('order')
             }catch (err) {
                 alert(err.response.data.message)
