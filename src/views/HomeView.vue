@@ -1,19 +1,23 @@
 <template>
-  <!-- <shop-header /> -->
-  <hello-world />
+  <div>
+    <div class="d-flex flex-column justify-space-between align-center mt-3 mb-3">
+      <v-btn color="success" to="/shop">go to shop</v-btn>
+    </div>
+    <hello-world />
+  </div>
+  
   
 </template>
 
 <script>
-// import ShopHeader from '@/components/ShopHeader.vue'
-  import HelloWorld from '../components/HelloWorld'
+import HelloWorld from '../components/HelloWorld'
 
-  export default {
-    name: 'Home',
+export default {
+  name: 'Home',
 
-    components: {
-      HelloWorld,
-      // ShopHeader
-    },
-  }
+  components: {
+    HelloWorld,
+    // ShopHeader
+  },
+}
 </script>

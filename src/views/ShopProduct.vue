@@ -159,7 +159,6 @@ export default {
         async addImage() {
             if(this.newImage) {
                 const formData = new FormData()
-                // formData.append('username', this.username)
                 formData.append('product_img', this.newImage)
 
                 try {
