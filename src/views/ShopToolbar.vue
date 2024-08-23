@@ -1,12 +1,15 @@
 <template>
   <div>
     <v-card
+    class="mx-auto overflow-hidden"
     color="grey lighten-4"
     flat
     tile >
-        <v-toolbar
+        <v-app-bar
         height="70px"
         dense >
+            <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+
             <v-toolbar-title >
                 <router-link to="/shop">
                     <v-btn
@@ -15,10 +18,9 @@
                     color="indigo">
                         Shop Store
                     </v-btn>
-                </router-link>
-                
+                </router-link>                
             </v-toolbar-title>
-            
+          
             <!-- <v-spacer></v-spacer> -->
 
             <v-btn icon>
@@ -74,7 +76,50 @@
                     </v-list-item>
                 </v-list>
             </v-menu>
-        </v-toolbar>
+        </v-app-bar>
+        <v-navigation-drawer
+        v-model="drawer"
+        fixed
+        temporary
+        style="z-index: 9999;">
+            <v-list
+            nav
+            dense>
+                <v-list-item-group
+                v-model="group"
+                active-class="deep-purple--text text--accent-4"
+                >
+                <!-- @click.once="navigateToShop('/shop')" -->
+                    <router-link to="/shop">
+                        <v-list-item>
+                            <v-list-item-icon>
+                                <v-icon>mdi-home</v-icon>
+                            </v-list-item-icon> 
+                            <v-list-item-title>Home</v-list-item-title>
+                        </v-list-item>
+                    </router-link>                   
+
+                    <router-link to="/order">
+                        <v-list-item 
+                        v-if="role == 'admin'">
+                            <v-list-item-icon>
+                                <v-icon>mdi-monitor-dashboard</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Order</v-list-item-title>
+                        </v-list-item>
+                    </router-link>                   
+
+                    <v-list-item
+                    v-if="headerToken"
+                    @click.once="navigateToProfile('/profile/'+user_id)">
+                        <v-list-item-icon>
+                            <v-icon>mdi-account</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>Account</v-list-item-title>
+                    </v-list-item>
+                </v-list-item-group>
+            </v-list>
+        </v-navigation-drawer>
     </v-card>
 
     <div v-if="registerComponent">
@@ -107,17 +152,22 @@ export default {
                 password: '',
             },
             user_id: '',
+            role: '',
             order: [],
             menu: ['logout'],
             loginComponent: false,
             registerComponent: false,
-            headerToken: '',      
+            headerToken: '',
+            drawer: false,
+            group: null,   
         } 
     },
     created() {
         this.headerToken = this.$cookies.get("token")
-        this.order = localStorage.getItem("order")
+        this.role = this.$cookies.get("role")
+        console.log(this.role) 
         this.user_id = this.$cookies.get("userID")
+        this.order = localStorage.getItem("order")
     },
     methods: {
         logout(route) {
@@ -131,7 +181,10 @@ export default {
         },
         navigateToProfile(route) {
             this.$router.push(route)
-        }
+        },
+        // navigateToShop(route) {
+        //     this.$router.push(route)
+        // },
     },
 }
 </script>

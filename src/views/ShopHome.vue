@@ -4,7 +4,8 @@
     color="grey lighten-4"
     height="30px"
     flat
-    tile>
+    tile
+    >
         <v-toolbar
         height="50px"
         dense>  
