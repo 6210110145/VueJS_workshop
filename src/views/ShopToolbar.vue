@@ -119,6 +119,17 @@
                     </v-list-item>
                 </v-list-item-group>
             </v-list>
+
+            <template v-if="headerToken" v-slot:append>
+                <div class="pa-2">
+                    <v-btn
+                    color="error"
+                    block
+                    @click.once="logout('/')">
+                        Logout
+                    </v-btn>
+                </div>
+            </template>
         </v-navigation-drawer>
     </v-card>
 

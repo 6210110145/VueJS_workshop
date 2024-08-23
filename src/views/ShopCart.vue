@@ -148,10 +148,10 @@ export default {
                     },
                 })
                 alert('order complete')
-                this.postdata = ''
+                this.postdata = {}
                 this.order = []
-                this.total()
                 localStorage.removeItem('order')
+                this.total()
             }catch (err) {
                 alert(err.response.data.message)
             }

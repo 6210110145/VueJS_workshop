@@ -126,6 +126,7 @@ export default {
             }).then((res) => {
                 alert(res.data.message)
                 this.closeItem()
+                window.location.reload()
             });
         },
         closeItem() {
