@@ -193,9 +193,6 @@ export default {
         navigateToProfile(route) {
             this.$router.push(route)
         },
-        // navigateToShop(route) {
-        //     this.$router.push(route)
-        // },
     },
 }
 </script>

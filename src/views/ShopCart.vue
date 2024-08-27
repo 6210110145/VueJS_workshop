@@ -146,12 +146,13 @@ export default {
                     headers: {
                         Authorization: `Bearer ${this.$cookies.get("token")}`
                     },
-                })
-                alert('order complete')
-                this.postdata = {}
-                this.order = []
-                localStorage.removeItem('order')
-                this.total()
+                }).then((res) => {
+                    alert(res.data.message)
+                    this.postdata = {}
+                    this.order = []
+                    localStorage.removeItem('order')
+                    this.total()
+                });                
             }catch (err) {
                 alert(err.response.data.message)
             }

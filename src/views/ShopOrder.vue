@@ -10,17 +10,21 @@
         > 
             <!-- Custom cell with @click event for the username column -->
             <template v-slot:[`item.username`]="{ item }">
-                <div @click="getOrder(item) ">
+                <div @click="getOrder(item)">
                     {{ item.username }}
                 </div>
             </template>
             
             <template v-slot:[`item.product_name`]="{ item }">
-                <div class="pre-line mb-2 mt-2">{{ item.product_name }}</div>
+                <div @click="getOrder(item)" class="pre-line mb-2 mt-2">
+                    {{ item.product_name }}
+                </div>
             </template>
 
             <template v-slot:[`item.amount`]="{ item }">
-                <div class="pre-line mb-2 mt-2">{{ item.amount }}</div>
+                <div @click="getOrder(item)" class="pre-line mb-2 mt-2">
+                    {{ item.amount }}
+                </div>
             </template>
         </v-data-table>
 
@@ -100,7 +104,6 @@ export default {
                     }      
                 });            
             });
-            // console.log(this.orders)
         },
         async getOrder(item) {
             console.log(item)
